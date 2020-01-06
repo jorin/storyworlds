@@ -1,0 +1,12 @@
+@import "../partials/colors";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/forms";
+
+.DraftEditor-root {
+  @extend .form-control;
+  height: 132px;
+  overflow: auto;
+  .DraftEditor-editorContainer { height: 120px; }
+}

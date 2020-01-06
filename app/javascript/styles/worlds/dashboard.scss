@@ -1,0 +1,17 @@
+@import "../partials/colors";
+
+.form-control.auto-slug {
+  background: $dark-cerulean;
+  border-color: rgba($midnight, 0.5);
+  &::placeholder { color: $ash !important; }
+  &:focus { background: $white; }
+}
+
+.hide-for-frontispiece {
+  opacity: 0;
+  &.frontispiece { max-height: 0; }
+}
+.hide-for-frontispiece,
+.show-for-frontispiece {
+  transition: max-height 2s, opacity 2s;
+}

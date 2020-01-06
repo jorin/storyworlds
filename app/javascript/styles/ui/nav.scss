@@ -1,0 +1,36 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "../partials/colors";
+
+ul.sections-nav {
+  position: sticky;
+  background: $dark-cerulean;
+  box-shadow: 0 5px 10px rgba($black, 0.5);
+  padding: 0;
+  list-style: none;
+  top: 0;
+  z-index: 2;
+  li a {
+    display: block;
+    color: $sky;
+    border-right: 1px solid transparent;
+    padding: 8px 16px;
+    text-decoration: none;
+    &:hover {
+      background: $sky;
+      color: $dark-cerulean;
+      border-right-color: $midnight;
+    }
+  }
+}
+.subsection-controls {
+  position: sticky;
+  margin: 0 -20px;
+  padding: 20px;
+  background: rgba($midnight, 0.75);
+  border-bottom: 1px solid $black;
+  top: 0;
+  z-index: 1;
+}
+.world-content .subsection-controls { top: 36px; }

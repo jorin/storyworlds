@@ -1,0 +1,125 @@
+@import "~bootstrap/scss/bootstrap";
+@import "./partials/colors";
+
+body {
+  background: $midnight;
+  color: $eggshell;
+}
+
+a { color: $sky; }
+
+hr {
+  border: none;
+  height: auto;
+  text-align: center;
+  &:before {
+    display: block;
+    color: $eggshell;
+    content: '…';
+    font-size: $font-size-lg;
+  }
+}
+
+label.required:after {
+  content: '*';
+  color: $danger;
+}
+
+@keyframes loader-icon-animation {
+  0% { font-size: 42px; opacity: 0.25; }
+  50% { font-size: 128px; opacity: 0.5; }
+  100% { font-size: 42px; opacity: 0.25; }
+}
+.loader-container { position: relative; }
+.loader {
+  display: block;
+  position: absolute;
+  background: rgba($midnight, 0.5);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  &:before,
+  &:after {
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    width: 200px;
+    margin: 0 0 140px -100px;
+    line-height: 0;
+    text-align: center;
+    text-shadow: 0 4px 10px $black;
+  }
+  &:before {
+    content: '⇧';
+    color: $sky;
+    animation: loader-icon-animation 2s linear infinite;
+  }
+  &:after { content: 'working…'; }
+}
+
+.text-muted { color: $ash !important; }
+
+.badge-read { @extend .badge-info; }
+.badge-write { @extend .badge-success; }
+
+.checkbox {
+  cursor: pointer;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  margin-bottom: -3px;
+  padding: 2px;
+  border: 1px solid $blue-gray;
+  &.checked:before {
+    background: $sky;
+    content: '';
+    display: block;
+    height: 12px;
+    width: 12px;
+  }
+}
+.labeled-checkbox {
+  cursor: pointer;
+  .checkbox + span { margin-left: 10px; }
+}
+
+.big-icon {
+  font-size: 128px;
+  line-height: 128px;
+}
+
+.editable-field {
+  cursor: pointer;
+  &:hover {
+    background: rgba($dark-cerulean, 0.5);
+    box-shadow: 0 0 10px rgba($dark-cerulean, 0.5);
+  }
+}
+
+.sidebar-form {
+  position: sticky;
+  top: 0;
+  background: rgba($dark-cerulean, 0.75);
+  padding: 16px;
+}
+
+.form-select {
+  .react-select__option {
+    color: $input-color;
+    &.react-select__option--is-selected { color: $white; }
+  }
+}
+
+.view-mode {
+  & > a {
+    color: $sky;
+    &.active {
+      color: $light;
+      pointer-events: none;
+    }
+  }
+}
+
+.public-DraftStyleDefault-block { margin-bottom: 16px; }

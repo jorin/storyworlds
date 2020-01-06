@@ -1,0 +1,63 @@
+@import "../partials/colors";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+.timeline-span {
+  position: relative;
+  background: $dark-cerulean;
+  margin: 0 1px;
+  width: 10px;
+  &.clickable { cursor: pointer; }
+  .timeline-hover {
+    display: none;
+    position: absolute;
+    padding-left: 60px;
+    top: 10%;
+    z-index: 1;
+    &:after {
+      content: '•';
+      position: absolute;
+      color: $white;
+      top: 0;
+      left: 3px;
+      text-shadow: 0 1px 0 $black;
+    }
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      border-bottom: 1px solid $midnight;
+      border-top: 1px solid $white;
+      height: 2px;
+      width: 52px;
+      top: 10px;
+      left: 4px;
+    }
+    .timeline-hover-content {
+      background: $dark-cerulean;
+      border-bottom: 1px solid $midnight;
+      padding: 0 6px;
+      box-shadow: 0 5px 10px rgba($black, 0.5);
+      white-space: nowrap;
+    }
+    .timeline-hover-content-block {
+      min-width: 200px;
+      white-space: normal;
+    }
+  }
+  &:hover {
+    background: $sky;
+    .timeline-hover { display: block; }
+  }
+}
+.timeline-span-color-0 { background: $primary; }
+.timeline-span-color-1 { background: $info; }
+.timeline-span-color-2 { background: $dark-orchid; }
+.timeline-span-color-3 { background: $success; }
+.timeline-span-color-4 { background: $wild-strawberry; }
+.timeline-span-color-5 { background: $blue-gray; }
+.timeline-span-color-6 { background: $deep-saffron; }
+.timeline-span-color-7 { background: $secondary; }
+.timeline-span-color-8 { background: $screamin-green; }
+.timeline-span-color-9 { background: $tangerine; }

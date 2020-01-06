@@ -1,0 +1,108 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "../partials/colors";
+
+.location-content .detail-cell .location-label { display: none; }
+.world-content > div {
+  & > h2 { padding-top: 60px; }
+  margin: 0 0 40px;
+}
+
+.detail-cell {
+  .more-info {
+    max-height: 0;
+    opacity: 0;
+    overflow: none;
+    transition: max-height 0.5s, opacity 1s;
+  }
+  &:hover .more-info {
+    max-height: 1000px;
+    opacity: 1;
+    overflow: auto;
+  }
+  .btn.float-right { margin: 0 -30px 20px 20px; }
+}
+
+.character-cell,
+.location-cell {
+  padding: 0 48px;
+  margin-bottom: 48px;
+  &:before {
+    display: block;
+    position: absolute;
+    margin-left: -48px;
+    width: 48px;
+    text-align: center;
+    font-size: $h1-font-size;
+    line-height: 0.5em;
+  }
+}
+.character-label,
+.location-label { &:before { margin-right: 6px; } }
+.character-cell,
+.character-label {
+  &:before {
+    content: '⚇';
+    color: $sky;
+  }
+}
+.location-cell,
+.location-label {
+  &:before {
+    content: '⌂';
+    color: $sky;
+  }
+}
+.character-label + .character-label { margin-left: 10px; }
+
+.contributor-cell {
+  background: rgba($dark-cerulean, 0.25);
+  border: 1px solid $ocean;
+  margin-bottom: 16px;
+  padding: 16px;
+  &:hover { background: rgba($dark-cerulean, 0.75); }
+}
+.contributor-controls {
+  width: 30px;
+  a { display: block; }
+}
+.contributor-identity {
+  margin-left: 30px;
+  & > {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+.contributor-permission {
+  &:hover {
+    color: $eggshell;
+    text-decoration: none;
+    &:after {
+      background: rgba($white, 0.9);
+      box-shadow: 0 0 5px rgba($black, 0.25);
+      color: $ocean;
+      position: absolute;
+      margin: -4px 0 0 10px;
+      padding: 4px 10px;
+      text-align: left;
+      white-space: nowrap;
+    }
+  }
+  &.read {
+    &:before { content: 'R'; }
+    &:hover:after { content: '[READ] Click to allow write'; }
+  }
+  &.remove {
+    color: $ash;
+    &:before { content: '×'; }
+    &:hover:after { content: 'Remove the contributor from the world'; }
+  }
+  &.write {
+    &:before { content: 'W'; }
+    &:hover:after { content: '[WRITE] Click to remove write permission'; }
+  }
+}
+
+.remove-on-save { text-decoration: line-through; }

@@ -1,0 +1,13 @@
+@import "../partials/colors";
+
+#header {
+  margin: 20px 0;
+  h1,
+  .header-user { margin: 15px 0; }
+  .container {
+    background: $dark-cerulean;
+    border-bottom: 1px solid $ocean;
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 0 6px 3px rgba($black, 0.25);
+  }
+}
