@@ -1,11 +1,4 @@
 class World < ApplicationRecord
-  TIMELINE_UNITS_DAYS = 'days'
-  TIMELINE_UNITS_MONTHS = 'months'
-  TIMELINE_UNITS_YEARS = 'years'
-  TIMELINE_UNITS = [TIMELINE_UNITS_DAYS, 
-                    TIMELINE_UNITS_MONTHS,
-                    TIMELINE_UNITS_YEARS].freeze
-
   belongs_to :creator, class_name: :User
   has_many :characters, dependent: :destroy, inverse_of: :world
   has_many :events, dependent: :destroy, inverse_of: :world
@@ -16,7 +9,6 @@ class World < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
-  validates :timeline_units, inclusion: { in: TIMELINE_UNITS }, allow_nil: true
 
   html_fragment :description, scrub: :strip
 

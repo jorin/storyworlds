@@ -8,7 +8,7 @@ module WorldsHelper
       permissions: world_permissions_props,
       user_id: session[:user_id],
       worldPath: world_path(@world.slug),
-      world: @world
+      world: @world.attributes
     }.to_camelback_keys.to_json
   end
 
@@ -48,18 +48,12 @@ module WorldsHelper
     }
   end
 
-  def create_props
-    {
-      timeline_units_options: World::TIMELINE_UNITS
-                              .map { |unit| { label: unit.titlecase, value: unit } },
-    }.merge(path_props)
-  end
-
   def events_props
     {
       characters_path: world_characters_path(@world.slug),
       events_path: world_events_path(@world.slug),
-      locations_path: world_locations_path(@world.slug)
+      locations_path: world_locations_path(@world.slug),
+      timeline_units: @world.timeline_units
     }
   end
 
@@ -69,7 +63,7 @@ module WorldsHelper
 
   def index_user_props
     {
-      create_props: create_props,
+      create_props: path_props,
       user_id: session[:user_id],
     }
   end

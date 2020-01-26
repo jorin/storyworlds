@@ -5,6 +5,8 @@ import Async from 'react-select/async';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Timeline from 'components/ui/timeline';
+import TimelineInput from 'components/ui/timeline_input';
+import TimelineLabel from 'components/ui/timeline_label';
 import 'styles/ui/html_area';
 import 'styles/ui/timeline';
 
@@ -99,6 +101,7 @@ export default class Events extends React.Component {
   };
 
   renderAddLocation = () => {
+    const { timelineUnits } = this.props;
     const { location } = this.state;
     const handleUpdate = (field, value) => this.setState(({ location }) => ({ location: Object.assign({}, location, { [field]: value }) }));
 
@@ -113,21 +116,19 @@ export default class Events extends React.Component {
                    value={location.name || ''} />
           </div>
           <div className='col-md-2'>
-            <input type='TEXT'
-                   className='form-control text-center'
-                   onChange={({ target: { value } }) => handleUpdate('starts', value)}
-                   placeholder='location starts'
-                   value={['number', 'string'].includes(typeof location.starts) ? location.starts : ''} />
+            <TimelineInput onChange={starts => handleUpdate('starts', starts)}
+                           placeholder='location starts'
+                           timelineUnits={timelineUnits}
+                           value={location.starts} />
           </div>
           <div className='col-md-1 text-center'>
             <div className='form-control-plaintext text-light'>→</div>
           </div>
           <div className='col-md-2'>
-            <input type='TEXT'
-                   className='form-control text-center'
-                   onChange={({ target: { value } }) => handleUpdate('ends', value)}
-                   placeholder='location ends'
-                   value={['number', 'string'].includes(typeof location.ends) ? location.ends : ''} />
+            <TimelineInput onChange={ends => handleUpdate('ends', ends)}
+                           placeholder='location ends'
+                           timelineUnits={timelineUnits}
+                           value={location.ends} />
           </div>
           <div className='col-md-1'>
             <a href='#'
@@ -182,6 +183,7 @@ export default class Events extends React.Component {
   };
 
   renderEvent = event => {
+    const { timelineUnits } = this.props;
     const { creatorId, description, ends, id, location, name, participants, starts } = event;
     const editable = this.isEditable(creatorId);
 
@@ -191,8 +193,9 @@ export default class Events extends React.Component {
            onClick={e => editable && this.setState({ event: Object.assign({}, event) })}>
         <div className='row'>
           <div className='col-sm-2'>
-            {(typeof starts === 'number' ||
-              typeof ends === 'number') && <p className='text-light'>{starts} → {ends}</p>}
+            <TimelineLabel starts={starts}
+                           ends={ends}
+                           timelineUnits={timelineUnits} />
           </div>
           <div className='col-sm-10'>
             <h3>
@@ -214,7 +217,7 @@ export default class Events extends React.Component {
   };
 
   renderForm() {
-    const { character } = this.props;
+    const { character, timelineUnits } = this.props;
     const { error, event: { description, ends, id, name, participants, starts } } = this.state;
     const location = this.props.location || this.state.event.location;
     const handleUpdate = (field, value) => this.setState(({ event }) => ({ event: Object.assign({}, event, { [field]: value }) }));
@@ -237,12 +240,11 @@ export default class Events extends React.Component {
           <div className='col-sm-5'>
             <div className='form-group'>
               <label className='required'>starts</label>
-              <input type='TEXT'
-                     className='form-control text-center'
-                     onChange={({ target: { value } }) => handleUpdate('starts', value)}
-                     placeholder='starts'
-                     value={['number', 'string'].includes(typeof starts) ? starts : ''} />
-              { eventFor && typeof eventFor.starts === 'number' && <small className='form-text text-muted text-center'>&gt;= {eventFor.starts}</small> }
+              <TimelineInput onChange={starts => handleUpdate('starts', starts)}
+                             placeholder='starts'
+                             timelineUnits={timelineUnits}
+                             value={starts} />
+              { eventFor && typeof eventFor.starts === 'number' && <small className='form-text text-muted text-center'>&gt;= {FormatService.timelineValueToDisplay(eventFor.starts, timelineUnits)}</small> }
             </div>
           </div>
           <div className='col-sm-2 text-center'>
@@ -253,12 +255,11 @@ export default class Events extends React.Component {
           <div className='col-sm-5'>
             <div className='form-group'>
               <label className='required float-right'>ends</label>
-              <input type='TEXT'
-                     className='form-control text-center'
-                     onChange={({ target: { value } }) => handleUpdate('ends', value)}
-                     placeholder='ends'
-                     value={['number', 'string'].includes(typeof ends) ? ends : ''} />
-              { eventFor && typeof eventFor.ends === 'number' && <small className='form-text text-muted text-center'>&lt;= {eventFor.ends}</small> }
+              <TimelineInput onChange={ends => handleUpdate('ends', ends)}
+                             placeholder='ends'
+                             timelineUnits={timelineUnits}
+                             value={ends} />
+              { eventFor && typeof eventFor.ends === 'number' && <small className='form-text text-muted text-center'>&lt;= {FormatService.timelineValueToDisplay(eventFor.ends, timelineUnits)}</small> }
             </div>
           </div>
         </div>
@@ -354,6 +355,7 @@ export default class Events extends React.Component {
   };
 
   renderTimelineHover = ({ ends, description, id, name, starts }) => {
+    const { timelineUnits } = this.props;
     const { selectedEventId } = this.state;
 
     return (
@@ -362,8 +364,9 @@ export default class Events extends React.Component {
         { id === selectedEventId &&
           <div className='timeline-hover-content-block'
                dangerouslySetInnerHTML={{ __html: description }} /> }
-        {(typeof starts === 'number' ||
-          typeof ends === 'number') && <div>{starts} → {ends}</div>}
+        <TimelineLabel starts={starts}
+                       ends={ends}
+                       timelineUnits={timelineUnits} />
       </React.Fragment>
     );
   };
@@ -403,5 +406,6 @@ Events.propTypes = {
   locationsPath: PropTypes.string.isRequired,
   handleTriggerReload: PropTypes.func,
   permissions: PropTypes.object.isRequired,
+  timelineUnits: PropTypes.string,
   userId: PropTypes.number,
 };

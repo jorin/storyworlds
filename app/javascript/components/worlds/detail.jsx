@@ -83,7 +83,7 @@ export default class Detail extends React.Component {
   render() {
     const { SECTION_CHARACTERS, SECTION_CONTRIBUTORS, SECTION_EVENTS, SECTION_LOCATIONS } = this.constructor;
     const { charactersProps, contributorsProps, eventsProps, locationsProps,
-            permissions, userId } = this.props;
+            permissions, world: { timelineUnits }, userId } = this.props;
     const { reload } = this.state;
 
     return (
@@ -102,6 +102,7 @@ export default class Detail extends React.Component {
           <div id='characters'>
             <h2>{SECTION_CHARACTERS}</h2>
             <Items permissions={permissions}
+                   timelineUnits={timelineUnits}
                    userId={userId}
                    {...charactersProps} />
           </div>
@@ -109,6 +110,7 @@ export default class Detail extends React.Component {
             <h2>{SECTION_LOCATIONS}</h2>
             <Items permissions={permissions}
                    reload={reload}
+                   timelineUnits={timelineUnits}
                    userId={userId}
                    {...locationsProps} />
           </div>

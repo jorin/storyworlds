@@ -1,0 +1,2 @@
+export const STANDARD_TIMELINE_DISPLAY_FORMAT = 'MMM D YYYY h:mma';
+export const STANDARD_TIMELINE_PARSE_FORMAT = 'MM/DD/YYYY h:mm a';

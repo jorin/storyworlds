@@ -4,6 +4,8 @@ import { Alert } from 'react-bootstrap';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Timeline from 'components/ui/timeline';
+import TimelineInput from 'components/ui/timeline_input';
+import TimelineLabel from 'components/ui/timeline_label';
 import 'styles/ui/html_area';
 import 'styles/ui/timeline';
 
@@ -76,7 +78,7 @@ export default class Items extends React.Component {
   };
 
   renderForm = () => {
-    const { itemKey, itemLabel } = this.props;
+    const { itemKey, itemLabel, timelineUnits } = this.props;
     const { error, [itemKey]: { description, ends, id, name, starts } } = this.state;
     const handleUpdate = (field, value) => this.setState(prevState => ({ [itemKey]: Object.assign({}, prevState[itemKey], { [field]: value }) }));
 
@@ -102,11 +104,10 @@ export default class Items extends React.Component {
         <div className='row'>
           <div className='col-sm-5'>
             <div className='form-group'>
-              <input type='TEXT'
-                     className='form-control text-center'
-                     onChange={({ target: { value } }) => handleUpdate('starts', value)}
-                     placeholder='starts'
-                     value={['number', 'string'].includes(typeof starts) ? starts : ''} />
+              <TimelineInput onChange={starts => handleUpdate('starts', starts)}
+                             placeholder='starts'
+                             timelineUnits={timelineUnits}
+                             value={starts} />
             </div>
           </div>
           <div className='col-sm-2 text-center'>
@@ -116,11 +117,10 @@ export default class Items extends React.Component {
           </div>
           <div className='col-sm-5'>
             <div className='form-group'>
-              <input type='TEXT'
-                     className='form-control text-center'
-                     onChange={({ target: { value } }) => handleUpdate('ends', value)}
-                     placeholder='ends'
-                     value={['number', 'string'].includes(typeof ends) ? ends : ''} />
+              <TimelineInput onChange={ends => handleUpdate('ends', ends)}
+                             placeholder='ends'
+                             timelineUnits={timelineUnits}
+                             value={ends} />
             </div>
           </div>
         </div>
@@ -134,11 +134,11 @@ export default class Items extends React.Component {
   };
 
   renderItemCol = item => {
-    const { itemKey, itemsPath } = this.props;
+    const { itemKey, itemsPath, timelineUnits } = this.props;
     const { creatorId, description, id, name, starts, ends } = item;
     const editable = this.isEditable(creatorId);
-    const colClass = this.state[itemKey] ? 'col-md-6 col-sm-12'
-                                          : 'col-md-4 col-sm-6';
+    const colClass = this.state[itemKey] ? 'col-sm-12'
+                                         : 'col-md-4 col-sm-6';
 
     return (
       <div className={colClass} key={id}>
@@ -150,8 +150,9 @@ export default class Items extends React.Component {
           <p className='lead'>{name}</p>
           <div className='more-info'
                dangerouslySetInnerHTML={{ __html: description }} />
-          {(typeof starts === 'number' ||
-            typeof ends === 'number') && <div>{starts} → {ends}</div>}
+          <TimelineLabel starts={starts}
+                         ends={ends}
+                         timelineUnits={timelineUnits} />
         </div>
       </div>
     );
@@ -182,6 +183,7 @@ export default class Items extends React.Component {
   };
 
   renderTimelineHover = ({ ends, description, id, name, starts }) => {
+    const { timelineUnits } = this.props;
     const { selectedTimelineId } = this.state;
 
     return (
@@ -191,7 +193,7 @@ export default class Items extends React.Component {
           <div className='timeline-hover-content-block'
                dangerouslySetInnerHTML={{ __html: description }} /> }
         {(typeof starts === 'number' ||
-          typeof ends === 'number') && <div>{starts} → {ends}</div>}
+          typeof ends === 'number') && <div>{FormatService.timelineValueToDisplay(starts, timelineUnits)} → {FormatService.timelineValueToDisplay(ends, timelineUnits)}</div>}
       </React.Fragment>
     );
   };
@@ -221,7 +223,7 @@ export default class Items extends React.Component {
                 ) }
             </div>
           </div>
-          { item && <div className='col-md-4 col-sm-6'>
+          { item && <div className='col-md-6 col-sm-8'>
                       <div className='sidebar-form'>{this.renderForm()}</div>
                     </div> }
         </div>
@@ -238,5 +240,6 @@ Items.propTypes = {
   itemsPath: PropTypes.string.isRequired,
   permissions: PropTypes.object.isRequired,
   reload: PropTypes.bool,
+  timelineUnits: PropTypes.string,
   userId: PropTypes.number,
 };

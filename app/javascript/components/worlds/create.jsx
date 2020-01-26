@@ -11,7 +11,7 @@ export default class Create extends React.Component {
     super(props);
 
     this.state = {
-      world: { timelineUnits: 'years', },
+      world: {},
     };
   };
 
@@ -39,11 +39,22 @@ export default class Create extends React.Component {
     this.setState(({ world }) => ({ world: Object.assign({}, world, { [field]: value }) }));
   };
 
+  formatCustomTimelineUnits = () => {
+    const { daysInMonth, monthsInYear } = this.state;
+    const timelineUnits = !daysInMonth ||
+                          !monthsInYear ||
+                          isNaN(daysInMonth) ||
+                          isNaN(monthsInYear) ? null : [monthsInYear, daysInMonth].join(':');
+
+    this.handleFieldChange('timelineUnits', timelineUnits);
+  };
+
   resetFocus = () => this.container && this.container.scrollIntoView();
 
   renderForm() {
     const { timelineUnitsOptions } = this.props;
-    const { world: { description, name, open, slug, timelineUnits } } = this.state;
+    const { customTimelineStyle, daysInMonth, monthsInYear,
+            world: { description, name, open, slug, timelineUnits } } = this.state;
 
     return (
       <React.Fragment>
@@ -75,7 +86,7 @@ export default class Create extends React.Component {
         <div className='form-group'>
           <label>privacy</label>
           <div className='labeled-checkbox'
-             onClick={e => this.handleFieldChange('open', !open, e)}>
+               onClick={e => this.handleFieldChange('open', !open, e)}>
             <span className={`checkbox ${open ? '' : 'checked'}`} />
             <span>{open ? 'Open' : 'Private'}</span>
           </div>
@@ -86,14 +97,44 @@ export default class Create extends React.Component {
         </div>
         <div className='form-group'>
           <label>timeline</label>
-          <Select className='form-select'
-                  classNamePrefix='react-select'
-                  isClearable
-                  onChange={option => this.handleFieldChange('timelineUnits', option && option.value)}
-                  options={timelineUnitsOptions}
-                  value={timelineUnitsOptions.find(({ value }) => timelineUnits === value)} />
-          <small className='form-text text-muted'>Display selection for the start and duration of events, characters, and locations (fractions will still be OK).</small>
+          <div className='labeled-checkbox'
+               onClick={e => this.setState({ customTimelineStyle: !customTimelineStyle, daysInMonth: null, monthsInYear: null }, this.formatCustomTimelineUnits)}>
+            <span className={`checkbox ${customTimelineStyle ? '' : 'checked'}`} />
+            <span>{customTimelineStyle ? 'Custom' : 'Standard'}</span>
+          </div>
+          <small className='form-text text-muted'>
+            { customTimelineStyle ? 'Timeline starts and ends comply with a custom calendar reflective of a fantasy worlds.'
+                                  : 'Timeline starts and ends are recorded as conventional real-world dates.' }
+          </small>
         </div>
+        { customTimelineStyle && (
+            <div className='row'>
+              <div className='col-md-3'>
+                <div className='form-group'>
+                  <label>Months in Year</label>
+                  <input className='form-control'
+                         onChange={({ target: { value } }) => this.setState({ monthsInYear: value }, this.formatCustomTimelineUnits)}
+                         type='TEXT'
+                         value={monthsInYear || ''} />
+                  <small className='form-text text-muted'>
+                    The number of months in each calendar year.
+                  </small>
+                </div>
+              </div>
+              <div className='col-md-3'>
+                <div className='form-group'>
+                  <label>Days in Month</label>
+                  <input className='form-control'
+                         onChange={({ target: { value } }) => this.setState({ daysInMonth: value }, this.formatCustomTimelineUnits)}
+                         type='TEXT'
+                         value={daysInMonth || ''} />
+                  <small className='form-text text-muted'>
+                    The number of days in each calendar month.
+                  </small>
+                </div>
+              </div>
+            </div>
+          ) }
         <hr />
         <div className='form-group'>
           <a href='#'
@@ -139,7 +180,6 @@ export default class Create extends React.Component {
 };
 
 Create.propTypes = {
-  timelineUnitsOptions: PropTypes.array.isRequired,
   worldPath: PropTypes.string.isRequired,
   worldsPath: PropTypes.string.isRequired,
 };

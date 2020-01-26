@@ -61,7 +61,7 @@ export default class Detail extends React.Component {
   };
 
   render() {
-    const { charactersPath, eventsPath, locationsPath, permissions, userId } = this.props;
+    const { charactersPath, eventsPath, locationsPath, permissions, timelineUnits, userId } = this.props;
     const { location } = this.state;
 
     return (
@@ -75,6 +75,7 @@ export default class Detail extends React.Component {
                     location={location}
                     locationsPath={locationsPath}
                     permissions={permissions}
+                    timelineUnits={timelineUnits}
                     userId={userId} />
           </div>
         </div>
