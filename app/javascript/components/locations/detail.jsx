@@ -38,8 +38,9 @@ export default class Detail extends React.Component {
 
   renderDescription() {
     const { FIELD_DESCRIPTION } = this.constructor;
-    const { permissions: { manage } } = this.props;
-    const { descriptionEdit, editing, location: { description } } = this.state;
+    const { permissions: { manage }, userId } = this.props;
+    const { descriptionEdit, editing, location: { creatorId, description } } = this.state;
+    const canEdit = manage || creatorId === userId;
 
     return (
       <div className='form-group'>
@@ -50,10 +51,10 @@ export default class Detail extends React.Component {
                       placeholder='description'
                       value={descriptionEdit} />
           ) : (
-            <div className={`row ${manage ? 'editable-field' : ''}`}
-                 onClick={e => manage && this.setState({ descriptionEdit: description, editing: FIELD_DESCRIPTION })}>
+            <div className={`row ${canEdit ? 'editable-field' : ''}`}
+                 onClick={e => canEdit && this.setState({ descriptionEdit: description, editing: FIELD_DESCRIPTION })}>
               <div className='col' 
-                   dangerouslySetInnerHTML={{ __html: description || (manage ? '<div class="small text-center text-muted"><i>[...Add a description]</i></div>' : '') }} />
+                   dangerouslySetInnerHTML={{ __html: description || (canEdit ? '<div class="small text-center text-muted"><i>[...Add a description]</i></div>' : '') }} />
             </div>
           ) }
       </div>
