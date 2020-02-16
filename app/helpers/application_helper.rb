@@ -7,6 +7,7 @@ module ApplicationHelper
       location: @location,
       root_path: root_path,
       sessions_path: sessions_path,
+      users_path: users_path,
       user: current_user&.attributes&.slice(*%w[email first_name])&.to_camelback_keys,
       world: @world,
       worlds_path: worlds_path

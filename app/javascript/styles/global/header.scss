@@ -3,7 +3,10 @@
 #header {
   margin: 20px 0;
   h1,
-  .header-user { margin: 15px 0; }
+  .header-user {
+    margin: 15px 0;
+    .dropdown:first-child { margin: 20px 0 10px; }
+  }
   .container {
     background: $dark-cerulean;
     border-bottom: 1px solid $ocean;

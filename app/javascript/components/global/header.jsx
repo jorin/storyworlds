@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 import 'styles/global/header';
 
 export default class Header extends React.Component {
@@ -77,13 +78,16 @@ export default class Header extends React.Component {
   };
 
   renderUser() {
-    const { sessionsPath, user: { firstName } } = this.props;
+    const { sessionsPath, usersPath, user: { firstName } } = this.props;
+    const { Item } = Dropdown;
 
     return (
       <div className='text-right'>
-        {firstName}
-        <br />
-        <a href={sessionsPath} data-method='DELETE'>Logout</a>
+        <DropdownButton alignRight
+                        title={firstName}>
+          <Item href={usersPath}>Settings</Item>
+          <Item href={sessionsPath} data-method='DELETE'>Logout</Item>
+        </DropdownButton>
       </div>
     );
   };
@@ -114,6 +118,7 @@ Header.propTypes = {
   location: PropTypes.object,
   rootPath: PropTypes.string.isRequired,
   sessionsPath: PropTypes.string.isRequired,
+  usersPath: PropTypes.string.isRequired,
   user: PropTypes.object,
   world: PropTypes.object,
   worldsPath: PropTypes.string.isRequired,

@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :users
+
   resources :worlds, param: :slug do
     resources :characters
     resources :events
