@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   private
 
   def permit_update
-    raise ActionController::BadRequest.new('Bad request') if current_user.id != params[:id]
+    raise ActionController::BadRequest.new('Bad request') if current_user.id != params[:id].to_i
   end
 
   def require_user
