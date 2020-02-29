@@ -80,6 +80,16 @@ export default class Detail extends React.Component {
     );
   };
 
+  renderTimelineDescription() {
+    const { world: { timelineUnits } } = this.props;
+
+    return (
+      <p className='small'>
+        <b>Timeline:</b> { timelineUnits && !isNaN(parseInt(timelineUnits)) ? timelineUnits.split(':').map((u, i) => `${u} ${['months in year', 'days in month'][i]}`).join('; ')  : 'Standard' }
+      </p>
+    );
+  };
+
   render() {
     const { SECTION_CHARACTERS, SECTION_CONTRIBUTORS, SECTION_EVENTS, SECTION_LOCATIONS } = this.constructor;
     const { charactersProps, contributorsProps, eventsProps, locationsProps,
@@ -88,6 +98,7 @@ export default class Detail extends React.Component {
 
     return (
       <div className='container'>
+        {this.renderTimelineDescription()}
         {this.renderDescription()}
         <hr />
         <div className='world-content'>
