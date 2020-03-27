@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def header_props_json
     {
@@ -8,7 +10,10 @@ module ApplicationHelper
       root_path: root_path,
       sessions_path: sessions_path,
       users_path: users_path,
-      user: current_user&.attributes&.slice(*%w[email first_name])&.to_camelback_keys,
+      user: current_user
+            &.attributes
+            &.slice('email', 'first_name')
+            &.to_camelback_keys,
       world: @world,
       worlds_path: worlds_path
     }.to_camelback_keys.to_json

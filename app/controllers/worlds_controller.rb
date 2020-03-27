@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorldsController < ApplicationController
   before_action :permit_create, only: %i[create]
   before_action :permit_show, only: %i[show]
@@ -25,7 +27,8 @@ class WorldsController < ApplicationController
     worlds = World.where(open: true)
     if current_user.present?
       worlds = worlds.or(current_user.created_worlds)
-                     .or(World.where(id: current_user.world_permissions.pluck(:world_id)))
+                     .or(World.where(id: current_user.world_permissions
+                                                     .pluck(:world_id)))
     end
 
     # TODO: sorting, paginating, etc

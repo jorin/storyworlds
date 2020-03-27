@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Location < ApplicationRecord
   belongs_to :creator, class_name: :User
   belongs_to :world, inverse_of: :locations
@@ -13,8 +15,8 @@ class Location < ApplicationRecord
   private
 
   def validate_starts_ends
-    if starts.present? && ends.present? && starts > ends
-      errors.add(:starts, 'must precede ends')
-    end
+    return unless starts.present? && ends.present? && starts > ends
+
+    errors.add(:starts, 'must precede ends')
   end
 end

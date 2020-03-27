@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LocationsHelper
   def location_show_props_json
     {
@@ -7,7 +9,7 @@ module LocationsHelper
       locations_path: world_locations_path(@world.slug),
       permissions: world_permissions_props,
       timeline_units: @world.timeline_units,
-      user_id: session[:user_id],
+      user_id: session[:user_id]
     }.to_camelback_keys.to_json
   end
 end

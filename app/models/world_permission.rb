@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorldPermission < ApplicationRecord
   PERMISSION_MANAGE = 'manage'
   PERMISSION_READ = 'read'

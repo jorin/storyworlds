@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CharactersController < ByWorldController
   before_action :character, only: %i[show]
   before_action :permit_character_update, only: %i[update]
@@ -9,7 +11,8 @@ class CharactersController < ByWorldController
   end
 
   def create
-    @character = world.characters.create(character_params.merge(creator: current_user))
+    @character = world.characters
+                      .create(character_params.merge(creator: current_user))
     render_for_character(character.persisted?)
   end
 
@@ -29,29 +32,42 @@ class CharactersController < ByWorldController
   end
 
   def characters
+    characters = matched_characters(
+      characters_in_timeline(world.characters,
+                             params[:starts],
+                             params[:ends]),
+      params[:search]
+    )
     # TODO: paginate
-    characters = world.characters
-    # filter to characters available within starts/ends params
-    # - no existing colliding events
-    # - character starts before the param ends
-    # - character ends after the param starts
-    if params[:starts].present? && params[:ends].present?
-      characters = characters.left_joins(:events)
-                             .where('events.id IS NULL or events.ends <= ? or ? <= events.starts',
-                                    params[:starts], params[:ends])
-                             .where('characters.starts is NULL or characters.starts <= ?', params[:ends])
-                             .where('characters.ends is NULL or characters.ends >= ?', params[:starts])
-    end
-    if params[:search].present?
-      characters = characters.where('characters.name like ?', "%#{params[:search]}%")
-    end
     characters.order(params[:sort]&.to_sym, :starts, :ends)
+  end
+
+  # filter to characters available within starts/ends params
+  # - no existing colliding events
+  # - character starts before the param ends
+  # - character ends after the param starts
+  def characters_in_timeline(characters, starts, ends)
+    return characters if starts.blank? || ends.blank?
+
+    characters.left_joins(:events)
+              .where('events.id IS NULL or '\
+                     'events.ends <= ? or ? <= events.starts',
+                     starts, ends)
+              .where('characters.starts is NULL or '\
+                     'characters.starts <= ?', ends)
+              .where('characters.ends is NULL or characters.ends >= ?', starts)
+  end
+
+  def matched_characters(characters, search)
+    return characters if characters.blank?
+
+    characters.where('characters.name like ?', "%#{search}%")
   end
 
   def permit_character_update
     unless world.can_manage?(session[:user_id]) ||
-            (world.can_write?(session[:user_id]) &&
-             character.creator_id == session[:user_id])
+           (world.can_write?(session[:user_id]) &&
+            character.creator_id == session[:user_id])
       not_found
     end
   end

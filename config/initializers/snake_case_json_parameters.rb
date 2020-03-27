@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module ActionController
   module ParamsToSnake
     extend ActiveSupport::Concern
 
     def process_action(*args)
       params = request.parameters.keys.each_with_object({}) do |k, p|
-                 v = request.parameters[k]
-                 p[k.underscore] = v.try(:to_snake_keys) || v
-               end
+        v = request.parameters[k]
+        p[k.underscore] = v.try(:to_snake_keys) || v
+      end
       request.parameters.merge!(params)
       super
     end

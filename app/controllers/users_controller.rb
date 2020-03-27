@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :require_user
   before_action :permit_update, only: %i[update]
@@ -15,7 +17,9 @@ class UsersController < ApplicationController
   private
 
   def permit_update
-    raise ActionController::BadRequest.new('Bad request') if current_user.id != params[:id].to_i
+    return if current_user.id == params[:id].to_i
+
+    raise ActionController::BadRequest, 'Bad request'
   end
 
   def require_user

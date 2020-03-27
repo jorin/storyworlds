@@ -1,0 +1,27 @@
+AllCops:
+  Exclude:
+    - '**/bin/**/*'
+    - '**/db/**/*'
+    - '**/tmp/**/*'
+    - '**/templates/**/*'
+    - '**/vendor/**/*'
+    - '**/node_modules/**/*'
+
+# app/helpers will include
+# long props lists for components,
+# ignore this cop for that pattern
+Metrics/MethodLength:
+  Exclude:
+    - '**/app/helpers/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true

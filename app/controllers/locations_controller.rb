@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LocationsController < ByWorldController
   before_action :location, only: %i[show]
   before_action :permit_location_update, only: %i[update]
@@ -9,7 +11,8 @@ class LocationsController < ByWorldController
   end
 
   def create
-    @location = world.locations.create(location_params.merge(creator: current_user))
+    @location = world.locations
+                     .create(location_params.merge(creator: current_user))
     render_for_location(location.persisted?)
   end
 
@@ -39,8 +42,8 @@ class LocationsController < ByWorldController
 
   def permit_location_update
     unless world.can_manage?(session[:user_id]) ||
-            (world.can_write?(session[:user_id]) &&
-             location.creator_id == session[:user_id])
+           (world.can_write?(session[:user_id]) &&
+            location.creator_id == session[:user_id])
       not_found
     end
   end

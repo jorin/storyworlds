@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Event < ApplicationRecord
   belongs_to :creator, class_name: :User
   belongs_to :location, inverse_of: :events
@@ -23,18 +25,27 @@ class Event < ApplicationRecord
 
   private
 
+  def error_ends_after_location
+    if location.ends? &&
+       (starts > location.ends || ends > location.ends)
+      errors.add(:ends, 'must be within location timeline')
+    end
+  end
+
+  def error_starts_before_location
+    if location.starts? &&
+       (starts < location.starts || ends < location.starts)
+      errors.add(:starts, 'must be within location timeline')
+    end
+  end
+
   def participants_attributes
-    participants.map { |p| p.attributes.merge(character: p.character.attributes) }
+    participants
+      .map { |p| p.attributes.merge(character: p.character.attributes) }
   end
 
   def validate_location_timeline
-    if location.starts? &&
-        (starts < location.starts || ends < location.starts)
-      errors.add(:starts, 'must be within location timeline')
-    end
-    if location.ends? &&
-        (starts > location.ends || ends > location.ends)
-      errors.add(:ends, 'must be within location timeline')
-    end
+    error_starts_before_location
+    error_ends_after_location
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WorldsHelper
   def world_show_props_json
     {
@@ -64,7 +66,7 @@ module WorldsHelper
   def index_user_props
     {
       create_props: path_props,
-      user_id: session[:user_id],
+      user_id: session[:user_id]
     }
   end
 
@@ -73,8 +75,8 @@ module WorldsHelper
       created_ids: current_user&.created_worlds&.pluck(:id),
       permissions: current_user&.world_permissions
                                &.each_with_object({}) do |p, ids|
-                                  ids[p.world_id] = p.permission
-                                 end
+                     ids[p.world_id] = p.permission
+                   end
     }.merge(path_props)
   end
 

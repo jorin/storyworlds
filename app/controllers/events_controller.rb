@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventsController < ByWorldController
   before_action :permit_event_update, only: %i[update]
   before_action :permit_read, only: %i[index]
@@ -22,7 +24,7 @@ class EventsController < ByWorldController
   def create_event
     ActiveRecord::Base.transaction do
       @event = world.events.create(event_params.merge(creator: current_user))
-      raise ActiveRecord::Rollback if !@event.persisted?
+      raise ActiveRecord::Rollback unless @event.persisted?
     end
   end
 
@@ -31,33 +33,45 @@ class EventsController < ByWorldController
   end
 
   def events
-    events = world.events.includes(:characters, :location, :participants).where(params.permit(:location_id))
-    events = events.where(characters: { id: params[:character_id] }) if params[:character_id].present?
-    events.order(params[:sort]&.to_sym, :starts, :ends)
+    events_for_character(world.events
+                              .includes(:characters, :location, :participants)
+                              .where(params.permit(:location_id)),
+                         params[:character_id])
+      .order(params[:sort]&.to_sym, :starts, :ends)
+  end
+
+  def events_for_character(events, character_id)
+    return events if character_id.blank?
+
+    events.where(characters: { id: character_id })
   end
 
   def event_params
-    if params[:location].present?
-      additional_params = {
-        location_id: world.locations
-                          .create!(params.require(:location)
-                                         .permit(:ends, :name, :starts)
-                                         .merge(creator: current_user)).id }
-    end
     event_params = params.require(:event)
-                         .permit(:id, :description, :ends, :location_id, :name, :starts,
+                         .permit(:id, :description, :ends, :location_id,
+                                 :name, :starts,
                                  participants: %i[id character_id _destroy])
-                         .merge(additional_params || {})
+                         .merge(event_location_params || {})
     if event_params[:participants].present?
-      event_params[:participants_attributes] = event_params.delete(:participants)
+      event_params[:participants_attributes] = event_params
+                                               .delete(:participants)
     end
     event_params
   end
 
+  def event_location_params
+    return {} if params[:location].blank?
+
+    { location_id: world.locations
+                        .create!(params.require(:location)
+                                        .permit(:ends, :name, :starts)
+                                        .merge(creator: current_user)).id }
+  end
+
   def permit_event_update
     unless world.can_manage?(session[:user_id]) ||
-            (world.can_write?(session[:user_id]) &&
-             event.creator_id == session[:user_id])
+           (world.can_write?(session[:user_id]) &&
+            event.creator_id == session[:user_id])
       not_found
     end
   end
