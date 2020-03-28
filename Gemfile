@@ -44,13 +44,14 @@ group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'pry'
+  gem 'pry-remote'
   gem 'rspec-rails'
   gem 'rubocop', require: false
 end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
-  gem 'pry-remote'
   gem 'web-console', '>= 3.3.0'
 end
 
@@ -58,6 +59,7 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
+  gem 'shoulda-matchers'
   gem 'simplecov', require: false
   # Easy installation and use of web drivers to run system tests with browsers
   gem 'webdrivers'

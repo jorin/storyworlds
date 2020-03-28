@@ -9,8 +9,10 @@ class Event < ApplicationRecord
 
   accepts_nested_attributes_for :participants, allow_destroy: true
 
-  validates :ends, numericality: { greater_than_or_equal_to: :starts }
   validates :name, presence: true
+  validates :ends, presence: true,
+                   numericality: { greater_than_or_equal_to: :starts }
+  validates :starts, presence: true
   validates_presence_of :creator
   validates_presence_of :location
   validates_presence_of :world
@@ -26,14 +28,14 @@ class Event < ApplicationRecord
   private
 
   def error_ends_after_location
-    if location.ends? &&
+    if location&.ends? &&
        (starts > location.ends || ends > location.ends)
       errors.add(:ends, 'must be within location timeline')
     end
   end
 
   def error_starts_before_location
-    if location.starts? &&
+    if location&.starts? &&
        (starts < location.starts || ends < location.starts)
       errors.add(:starts, 'must be within location timeline')
     end

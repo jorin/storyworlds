@@ -11,7 +11,9 @@ class Participant < ApplicationRecord
       .where(character_id: participant.character_id)
   }
 
-  validates :character, uniqueness: { scope: :event }
+  validates :character_id, uniqueness: { scope: :event_id }
+  validates_presence_of :character
+  validates_presence_of :event
   validate :validate_character
 
   private
@@ -22,21 +24,21 @@ class Participant < ApplicationRecord
   def error_character_not_available
     if Participant.other_participants_of_character(self)
                   .where.not('events.ends <= ? or ? <= events.starts',
-                             event.starts, event.ends)
+                             event&.starts, event&.ends)
                   .exists?
       errors.add(:character, 'is already occupied during event')
     end
   end
 
   def error_character_starts_after_event_ends
-    if character.starts.present? &&
+    if character&.starts.present? &&
        character.starts > event.ends
       errors.add(:character, 'must start before event ends')
     end
   end
 
   def error_event_starts_after_character_ends
-    if character.ends.present? &&
+    if character&.ends.present? &&
        character.ends < event.starts
       errors.add(:event, 'must start before character ends')
     end

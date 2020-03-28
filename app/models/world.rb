@@ -11,6 +11,7 @@ class World < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
+  validates_presence_of :creator
 
   html_fragment :description, scrub: :strip
 

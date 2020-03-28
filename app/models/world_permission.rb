@@ -10,7 +10,7 @@ class WorldPermission < ApplicationRecord
   belongs_to :world, inverse_of: :world_permissions
 
   validates :permission, inclusion: PERMISSIONS
-  validates :user, uniqueness: { scope: :world }
+  validates :user_id, uniqueness: { scope: :world_id }
   validates_presence_of :user
   validates_presence_of :world
 
