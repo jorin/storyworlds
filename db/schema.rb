@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_02_213305) do
+ActiveRecord::Schema.define(version: 2020_03_28_211733) do
 
   create_table "characters", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
     t.bigint "creator_id"
     t.bigint "world_id", null: false
-    t.float "starts"
-    t.float "ends"
+    t.bigint "starts"
+    t.bigint "ends"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["creator_id"], name: "index_characters_on_creator_id"
@@ -31,8 +31,8 @@ ActiveRecord::Schema.define(version: 2020_01_02_213305) do
     t.bigint "creator_id"
     t.bigint "location_id", null: false
     t.bigint "world_id", null: false
-    t.float "starts"
-    t.float "ends"
+    t.bigint "starts"
+    t.bigint "ends"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["creator_id"], name: "index_events_on_creator_id"
@@ -45,8 +45,8 @@ ActiveRecord::Schema.define(version: 2020_01_02_213305) do
     t.text "description"
     t.bigint "creator_id"
     t.bigint "world_id", null: false
-    t.float "starts"
-    t.float "ends"
+    t.bigint "starts"
+    t.bigint "ends"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["creator_id"], name: "index_locations_on_creator_id"
