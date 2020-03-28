@@ -74,7 +74,7 @@ export default class Detail extends React.Component {
             <Events character={character}
                     charactersPath={charactersPath}
                     eventsPath={eventsPath}
-                    locationsPath={charactersPath}
+                    locationsPath={locationsPath}
                     permissions={permissions}
                     timelineUnits={timelineUnits}
                     userId={userId} />

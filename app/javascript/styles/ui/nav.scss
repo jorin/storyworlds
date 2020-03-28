@@ -1,13 +1,13 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import "../partials/bootstrap";
 @import "../partials/colors";
 
 ul.sections-nav {
   position: sticky;
   background: $dark-cerulean;
   box-shadow: 0 5px 10px rgba($black, 0.5);
-  padding: 0;
+  font-size: $small-font-size;
+  margin: 0 -15px;
+  padding: 0 15px;
   list-style: none;
   top: 0;
   z-index: 2;
@@ -15,13 +15,19 @@ ul.sections-nav {
     display: block;
     color: $sky;
     border-right: 1px solid transparent;
-    padding: 8px 16px;
+    padding: 8px;
     text-decoration: none;
     &:hover {
       background: $sky;
       color: $dark-cerulean;
       border-right-color: $midnight;
     }
+  }
+  @include media-breakpoint-up(md) {
+    font-size: $font-size-base;
+    margin: 0;
+    padding: 0;
+    li a { padding: 8px 16px; }
   }
 }
 .subsection-controls {
@@ -31,6 +37,7 @@ ul.sections-nav {
   background: rgba($midnight, 0.75);
   border-bottom: 1px solid $black;
   top: 0;
+  width: 100%;
   z-index: 1;
 }
 .world-content .subsection-controls { top: 36px; }

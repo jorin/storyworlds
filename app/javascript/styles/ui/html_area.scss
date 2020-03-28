@@ -1,8 +1,6 @@
-@import "../partials/colors";
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
+@import "../partials/bootstrap";
 @import "~bootstrap/scss/forms";
+@import "../partials/colors";
 
 .DraftEditor-root {
   @extend .form-control;
