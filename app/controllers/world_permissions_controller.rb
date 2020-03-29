@@ -18,22 +18,25 @@ class WorldPermissionsController < ByWorldController
   private
 
   def create_by_email
-    permission = params[:permission]
     user_ids = User.where(email: params[:email]).pluck(:id)
 
     if user_ids.present?
       permissions =
-        create_user_permissions!(user_ids,
-                                 update_user_permissions(user_ids,
-                                                         permission))
-
+        add_user_permissions(user_ids, params[:permission])
     end
 
     render json: (permissions ||
                   []).map { |p| p.to_contributor_h.to_camelback_keys }
   end
 
-  def create_user_permissions!(user_ids, permissions)
+  def add_user_permissions(user_ids, permission)
+    create_user_permissions!(user_ids,
+                             permission,
+                             update_user_permissions(user_ids,
+                                                     permission))
+  end
+
+  def create_user_permissions!(user_ids, permission, permissions)
     new_user_ids = user_ids - permissions.map(&:user_id)
     if new_user_ids.present?
       permissions += new_user_ids.map do |user_id|
