@@ -46,7 +46,9 @@ group :development, :test do
   gem 'faker'
   gem 'pry'
   gem 'pry-remote'
-  gem 'rspec-rails'
+  gem 'rails-controller-testing'
+  gem 'rspec-rails', git: 'https://github.com/rspec/rspec-rails',
+                     branch: 'restore-4-0-dev'
   gem 'rubocop', require: false
 end
 
