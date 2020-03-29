@@ -23,7 +23,7 @@ class LocationsController < ByWorldController
   private
 
   def location
-    @location ||= world.locations.find(params[:id])
+    @location ||= world&.locations&.find_by(id: params[:id])
   end
 
   def location_params

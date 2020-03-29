@@ -23,7 +23,7 @@ class CharactersController < ByWorldController
   private
 
   def character
-    @character ||= world.characters.find(params[:id])
+    @character ||= world&.characters&.find_by(id: params[:id])
   end
 
   def character_params

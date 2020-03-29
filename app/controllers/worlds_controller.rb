@@ -40,7 +40,11 @@ class WorldsController < ApplicationController
   end
 
   def permit_show
-    not_found unless world.can_read?(session[:user_id])
+    return if world&.can_read?(session[:user_id])
+
+    not_found if current_user.present?
+
+    render :index
   end
 
   def permit_update
