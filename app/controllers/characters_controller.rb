@@ -59,7 +59,7 @@ class CharactersController < ByWorldController
   end
 
   def matched_characters(characters, search)
-    return characters if characters.blank?
+    return characters if search.blank?
 
     characters.where('characters.name like ?', "%#{search}%")
   end
