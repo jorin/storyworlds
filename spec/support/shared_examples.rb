@@ -96,7 +96,7 @@ RSpec.shared_examples 'name-searchable world items' do
   end
 end
 
-RSpec.shared_examples 'create world item' do
+RSpec.shared_examples 'create world item' do |additional_params = {}|
   let(:item_type) do
     described_class.to_s
                    .underscore
@@ -107,7 +107,7 @@ RSpec.shared_examples 'create world item' do
   let(:item_attributes) { attributes_for item_type }
   let(:create_params) do
     { world_slug: world.slug,
-      item_type => item_attributes }
+      item_type => item_attributes }.merge(additional_params)
   end
 
   shared_examples 'allowed' do
