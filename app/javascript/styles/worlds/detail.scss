@@ -12,7 +12,7 @@
     .more-info {
       max-height: 0;
       opacity: 0;
-      overflow: none;
+      overflow: hidden;
       transition: max-height 0.5s, opacity 1s;
     }
     &:hover .more-info {

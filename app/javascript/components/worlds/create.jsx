@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert } from 'react-bootstrap';
-import Select from 'react-select';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import 'styles/ui/html_area';

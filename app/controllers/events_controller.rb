@@ -6,8 +6,9 @@ class EventsController < ByWorldController
   before_action :permit_write, only: %i[create]
 
   def index
-    # TODO: search / paginate
-    render json: { events: events.map(&:to_full_event_h) }.to_camelback_keys
+    # TODO: search
+    render json: { events: page_of_events.map(&:to_full_event_h),
+                   total: events.size }.to_camelback_keys
   end
 
   def create
@@ -33,10 +34,11 @@ class EventsController < ByWorldController
   end
 
   def events
-    events_for_character(world.events
-                              .includes(:characters, :location, :participants)
-                              .where(params.permit(:location_id)),
-                         params[:character_id])
+    @events ||=
+      events_for_character(world.events
+                                .includes(:characters, :location, :participants)
+                                .where(params.permit(:location_id)),
+                           params[:character_id])
       .order(params[:sort]&.to_sym, :starts, :ends)
   end
 
@@ -66,6 +68,12 @@ class EventsController < ByWorldController
                         .create!(params.require(:location)
                                         .permit(:ends, :name, :starts)
                                         .merge(creator: current_user)).id }
+  end
+
+  def page_of_events
+    return events if params[:per_page].blank?
+
+    events.offset(params[:from] || 0).limit(params[:per_page])
   end
 
   def permit_event_update

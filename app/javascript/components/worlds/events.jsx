@@ -4,10 +4,12 @@ import { Alert } from 'react-bootstrap';
 import Async from 'react-select/async';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
+import Paginator from 'components/ui/paginator';
 import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
 import 'styles/ui/html_area';
+import 'styles/ui/paginator';
 import 'styles/ui/timeline';
 
 export default class Events extends React.Component {
@@ -15,7 +17,10 @@ export default class Events extends React.Component {
     super(props);
 
     this.state = {
+      events: [],
       mode: this.constructor.MODE_LIST,
+      perPage: 5,
+      total: 0
     };
   };
 
@@ -27,7 +32,8 @@ export default class Events extends React.Component {
   handleSave = e => {
     if (e) { e.preventDefault(); }
     const { eventsPath, handleTriggerReload, location } = this.props;
-    const { event, event: { id } } = this.state;
+    const { event, event: { id }, events, perPage } = this.state;
+    const reloadEventsCount = events.length || perPage;
     const data = { event: Object.assign({}, event) };
     if (location) { data.event.locationId = location.id; }
     else { data.location = this.state.location; }
@@ -42,11 +48,20 @@ export default class Events extends React.Component {
     }).done(event => this.setState(prevState => {
       const events = prevState.events.slice(0);
       const index = events.findIndex(({ id }) => event.id === id);
-      index === -1 ? events.push(event) : events[index] = event;
-      events.sort(FormatService.sortByTimeline);
 
-      return { error: null, event: null, events, location: null };
-    }), () => handleTriggerReload && location && handleTriggerReload())
+      // update the existing event if its been loaded into the page
+      if (index !== 1) {
+        events[index] = event;
+        events.sort(FormatService.sortByTimeline);
+      }
+
+      // but reset events if it hasn't been loaded already
+      return { error: null, event: null, events: id ? events : [], location: null };
+    }), () => {
+      // just reload the current payload of events if this was a new event
+      if (!id) { this.loadEvents(0, reloadEventsCount); }
+      handleTriggerReload && location && handleTriggerReload();
+    })
       .fail(jqXHR => this.setState({ error: (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.error) || 'Failed to save event' }))
       .always(() => this.setState({ loading: false }));
   };
@@ -86,17 +101,19 @@ export default class Events extends React.Component {
     return manage || (write && creatorId === userId);
   };
 
-  loadEvents() {
+  loadEvents = (from = this.state.events.length, perPage = this.state.perPage) => {
     const { character, eventsPath, location } = this.props;
     const data = { characterId: character && character.id,
-                   locationId: location && location.id };
+                   locationId: location && location.id,
+                   from,
+                   perPage };
 
     this.setState({ loading: true });
     $.ajax({
       data,
       method: 'GET',
       url: eventsPath
-    }).done(({ events }) => this.setState({ events }))
+    }).done(({ events, total }) => this.setState(prevState => ({ events: prevState.events.concat(events), total })))
       .always(() => this.setState({ loading: false }));
   };
 
@@ -374,7 +391,7 @@ export default class Events extends React.Component {
   render() {
     const { MODE_LIST } = this.constructor;
     const { character, permissions: { write } } = this.props;
-    const { loading, event, events, mode } = this.state;
+    const { loading, event, events, mode, perPage, total } = this.state;
 
     return (
       <div className='loader-container'>
@@ -392,6 +409,11 @@ export default class Events extends React.Component {
         {this.renderModes()}
         { mode === MODE_LIST ? (events || []).map(this.renderEvent)
                              : this.renderTimeline() }
+        <Paginator loadedCount={events.length}
+                   handlePerPageChange={perPage => this.setState({ perPage })}
+                   handlePage={this.loadEvents}
+                   perPage={perPage}
+                   total={total} />
         { loading && <div className='loader' /> }
       </div>
     );
