@@ -7,7 +7,8 @@ class CharactersController < ByWorldController
   before_action :permit_write, only: %i[create]
 
   def index
-    render json: { characters: characters.map(&:attributes) }.to_camelback_keys
+    render json: { characters: page(characters).map(&:attributes),
+                   total: characters.size }.to_camelback_keys
   end
 
   def create
@@ -32,14 +33,12 @@ class CharactersController < ByWorldController
   end
 
   def characters
-    characters = matched_characters(
+    @characters ||= matched_characters(
       characters_in_timeline(world.characters,
                              params[:starts],
                              params[:ends]),
       params[:search]
-    )
-    # TODO: paginate
-    characters.order(params[:sort]&.to_sym, :starts, :ends)
+    ).order(params[:sort]&.to_sym, :starts, :ends)
   end
 
   # filter to characters available within starts/ends params

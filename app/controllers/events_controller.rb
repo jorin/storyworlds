@@ -7,7 +7,7 @@ class EventsController < ByWorldController
 
   def index
     # TODO: search
-    render json: { events: page_of_events.map(&:to_full_event_h),
+    render json: { events: page(events).map(&:to_full_event_h),
                    total: events.size }.to_camelback_keys
   end
 
@@ -68,12 +68,6 @@ class EventsController < ByWorldController
                         .create!(params.require(:location)
                                         .permit(:ends, :name, :starts)
                                         .merge(creator: current_user)).id }
-  end
-
-  def page_of_events
-    return events if params[:per_page].blank?
-
-    events.offset(params[:from] || 0).limit(params[:per_page])
   end
 
   def permit_event_update

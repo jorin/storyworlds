@@ -38,42 +38,6 @@ RSpec.describe EventsController, type: :controller do
 
       it { is_expected.to contain_exactly(hash_including('id' => event1.id)) }
     end
-
-    # TODO: see if this can be extracted to world items tests once characters +
-    #       locations also paginate!
-    context 'when paginating' do
-      let!(:event1) { create :event, world: world, starts: 500 }
-      let!(:event2) { create :event, world: world, starts: 200 }
-      let!(:event3) { create :event, world: world, starts: 300 }
-      let!(:event4) { create :event, world: world, starts: 700 }
-      before { login(world.creator) }
-
-      context 'when not specifying where to start' do
-        before do
-          get :index, format: :json, params: { world_slug: world.slug,
-                                               per_page: 3 }
-        end
-
-        it 'pulls a page from the 0 index' do
-          is_expected.to contain_exactly(hash_including('id' => event2.id),
-                                         hash_including('id' => event3.id),
-                                         hash_including('id' => event1.id))
-        end
-      end
-
-      context 'when specifying index' do
-        before do
-          get :index, format: :json, params: { world_slug: world.slug,
-                                               from: 1,
-                                               per_page: 2 }
-        end
-
-        it 'starts from that index' do
-          is_expected.to contain_exactly(hash_including('id' => event3.id),
-                                         hash_including('id' => event1.id))
-        end
-      end
-    end
   end
 
   describe 'POST #create' do

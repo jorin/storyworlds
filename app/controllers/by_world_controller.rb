@@ -3,6 +3,12 @@
 class ByWorldController < ApplicationController
   private
 
+  def page(collection)
+    return collection if params[:per_page].blank?
+
+    collection.offset(params[:from] || 0).limit(params[:per_page])
+  end
+
   def permit_modify
     not_found unless world.can_manage?(session[:user_id])
   end

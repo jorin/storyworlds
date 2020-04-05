@@ -7,7 +7,8 @@ class LocationsController < ByWorldController
   before_action :permit_write, only: %i[create]
 
   def index
-    render json: { locations: locations.map(&:attributes) }.to_camelback_keys
+    render json: { locations: page(locations).map(&:attributes),
+                   total: locations.size }.to_camelback_keys
   end
 
   def create
@@ -32,12 +33,16 @@ class LocationsController < ByWorldController
   end
 
   def locations
-    # TODO: paginate
-    locations = world.locations.order(params[:sort]&.to_sym, :starts, :ends)
-    if params[:search].present?
-      locations = locations.where('name like ?', "%#{params[:search]}%")
-    end
-    locations
+    @locations ||= begin
+                     locations = world.locations
+                                      .order(params[:sort]&.to_sym,
+                                             :starts, :ends)
+                     if params[:search].present?
+                       locations = locations
+                                   .where('name like ?', "%#{params[:search]}%")
+                     end
+                     locations
+                   end
   end
 
   def permit_location_update
