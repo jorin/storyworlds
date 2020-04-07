@@ -43,9 +43,18 @@
 .character-cell,
 .character-label {
   &:before {
-    content: '⚇';
-    color: $sky;
+    background: $sky;
+    content: '';
+    display: inline-block;
+    mask: url(~bootstrap-icons/icons/people-circle.svg) center/cover no-repeat;
+    height: 0.75em;
+    width: 0.75em;
   }
+}
+.character-cell:before {
+  height: 0.5em;
+  margin: 0.125em 0 0 -34px;
+  width: 0.5em;
 }
 .location-cell,
 .location-label {
