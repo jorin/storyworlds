@@ -2,11 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Creatable from 'react-select';
 
-const Paginator = ({ loadedCount, handlePerPageChange, handlePage, perPage, total }) => !!total && total > loadedCount &&
-  <div className='my-3 text-center paginator'>
-    <div className='d-inline-block lead my-2 text-center pagination-count'>
+const Paginator = ({ className, loadedCount, handlePerPageChange, handlePage, perPage, total }) => !!total && total > loadedCount &&
+  <div className={['my-3 text-center paginator'].concat(className).join(' ')}>
+    <div className='d-inline-block lead mt-2 text-center pagination-count'>
       {loadedCount} of {total}
     </div> 
+    <div className='small mb-3 mt-n1 text-muted'>Loaded</div>
     <div className='align-items-center small'>
       <a href='#' onClick={e => { e.preventDefault(); handlePage(); }}><strong>Load</strong></a> another
       <Creatable className='d-inline-block ml-2 form-select per-page-select' onChange={({ value }) => handlePerPageChange(value)}
@@ -28,6 +29,7 @@ Paginator.propTypes = {
 };
 
 Paginator.defaultProps = {
+  className: '',
   events: [],
   perPage: 5,
   total: 0,

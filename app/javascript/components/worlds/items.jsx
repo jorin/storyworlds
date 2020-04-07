@@ -3,6 +3,7 @@ import React from 'react';
 import { Alert } from 'react-bootstrap';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
+import Paginator from 'components/ui/paginator';
 import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
@@ -13,8 +14,13 @@ export default class Items extends React.Component {
   constructor(props) {
     super(props);
 
+    const { itemsKey } = this.props;
+
     this.state = {
+      [itemsKey]: [],
       mode: this.constructor.MODE_LIST,
+      perPage: 5,
+      total: 0
     };
   };
 
@@ -66,14 +72,15 @@ export default class Items extends React.Component {
     return manage || (write && creatorId === userId);
   };
 
-  loadItems = () => {
+  loadItems = (from = this.state[this.props.itemsKey].length, perPage = this.state.perPage) => {
     const { itemsKey, itemsPath } = this.props;
 
     this.setState({ loading: true });
     $.ajax({
+      data: { from, perPage },
       method: 'GET',
       url: itemsPath
-    }).done(data => this.setState({ [itemsKey]: data[itemsKey] }))
+    }).done(data => this.setState(prevState => ({ [itemsKey]: prevState[itemsKey].concat(data[itemsKey]), total: data.total })))
       .always(() => this.setState({ loading: false }));
   };
 
@@ -201,7 +208,7 @@ export default class Items extends React.Component {
   render() {
     const { MODE_LIST } = this.constructor;
     const { itemKey, itemLabel, itemsKey, permissions: { write } } = this.props;
-    const { loading, mode } = this.state;
+    const { loading, mode, perPage, total } = this.state;
     const item = this.state[itemKey];
     const items = this.state[itemsKey];
 
@@ -213,8 +220,18 @@ export default class Items extends React.Component {
             <div className='row'>
               { mode === MODE_LIST ? (items || []).map(this.renderItemCol)
                                    : this.renderTimeline() }
+              { items.length < total && (
+                  <div className='col-md-4 col-sm-6 mb-5'>
+                    <Paginator className='in-item-grid mt-n2 mt-sm-3'
+                               loadedCount={items.length}
+                               handlePerPageChange={perPage => this.setState({ perPage })}
+                               handlePage={this.loadItems}
+                               perPage={perPage}
+                               total={total} />
+                  </div>
+                ) }
               {!item && write && (
-                  <div className='col-md-4 col-sm-6'>
+                  <div className='col-md-4 col-sm-6 d-flex align-items-center'>
                     <a href='#'
                        className='btn btn-success btn-block'
                        onClick={e => { e.preventDefault();

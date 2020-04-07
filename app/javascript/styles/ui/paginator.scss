@@ -1,8 +1,10 @@
+@import "../partials/bootstrap";
 @import "../partials/colors";
 
 .pagination-count:before {
   content: '▲';
   display: block;
 }
+@include media-breakpoint-up(sm) { .in-item-grid .pagination-count:before { content: '◄'; } }
 
 .per-page-select { min-width: 5rem; }

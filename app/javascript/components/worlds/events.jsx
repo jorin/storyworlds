@@ -409,11 +409,15 @@ export default class Events extends React.Component {
         {this.renderModes()}
         { mode === MODE_LIST ? (events || []).map(this.renderEvent)
                              : this.renderTimeline() }
-        <Paginator loadedCount={events.length}
-                   handlePerPageChange={perPage => this.setState({ perPage })}
-                   handlePage={this.loadEvents}
-                   perPage={perPage}
-                   total={total} />
+        <div className='row'>
+          <div className='col-sm-4'>
+            <Paginator loadedCount={events.length}
+                       handlePerPageChange={perPage => this.setState({ perPage })}
+                       handlePage={this.loadEvents}
+                       perPage={perPage}
+                       total={total} />
+          </div>
+        </div>
         { loading && <div className='loader' /> }
       </div>
     );
