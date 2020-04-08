@@ -26,6 +26,7 @@ export default class Items extends React.Component {
 
   static MODE_LIST = 'list';
   static MODE_TIMELINE = 'timeline';
+  static SORT_BY_NAME = 'name';
 
   componentDidMount() { this.loadItems(); };
   // allow reloading flag to catch an external change
@@ -74,10 +75,14 @@ export default class Items extends React.Component {
 
   loadItems = (from = this.state[this.props.itemsKey].length, perPage = this.state.perPage) => {
     const { itemsKey, itemsPath } = this.props;
+    const { reverseOrder, sortBy } = this.state;
+    const data = { from, perPage };
+    if (reverseOrder) { Object.assign(data, { sortBy: 'ends', sortOrder: 'desc' }); }
+    if (sortBy) { Object.assign(data, { sortBy }); }
 
     this.setState({ loading: true });
     $.ajax({
-      data: { from, perPage },
+      data,
       method: 'GET',
       url: itemsPath
     }).done(data => this.setState(prevState => ({ [itemsKey]: prevState[itemsKey].concat(data[itemsKey]), total: data.total })))
@@ -176,6 +181,38 @@ export default class Items extends React.Component {
     return <p className='view-mode'>{renderLink(MODE_LIST)} | {renderLink(MODE_TIMELINE)}</p>;
   };
 
+  renderSorts() {
+    const { SORT_BY_NAME } = this.constructor;
+    const { itemsKey } = this.props;
+    const { perPage, reverseOrder, sortBy } = this.state;
+    const reloadCount = this.state[itemsKey].length || perPage;
+    const refreshCallback = () => this.loadItems(0, reloadCount);
+    const sortByName = sortBy === SORT_BY_NAME;
+
+    return (
+      <div className='float-right'>
+        <a href='#'
+           className='sort-toggler mr-3'
+           onClick={e => {
+                      e.preventDefault();
+                      this.setState(({ sortBy }) => ({ [itemsKey]: [],
+                                                       sortBy: (sortBy !== SORT_BY_NAME) && SORT_BY_NAME }), refreshCallback);
+                    }}>
+          <span className={sortByName ? 'text-white' : ''}>name</span>
+          <span className={`mx-2 sort-toggler-indicator ${sortByName ? 'left' : 'right'}`} />
+          <span className={sortByName ? '' : 'text-white'}>timeline</span>
+        </a>
+        <a href='#'
+           className={`sort-order ${ reverseOrder ? 'desc' : '' }`}
+           onClick={e => {
+                      e.preventDefault();
+                      this.setState(({ reverseOrder }) => ({ [itemsKey]: [],
+                                                             reverseOrder: !reverseOrder }), refreshCallback);
+                    }} />
+      </div>
+    );
+  };
+
   renderTimeline() {
     const { itemsKey } = this.props;
 
@@ -214,6 +251,7 @@ export default class Items extends React.Component {
 
     return (
       <div className='loader-container'>
+        {this.renderSorts()}
         {this.renderModes()}
         <div className='row'>
           <div className='col'>

@@ -123,3 +123,26 @@
   }
   &.desc:before { content: '↑'; }
 }
+
+a.sort-toggler {
+  text-decoration: none;
+  .sort-toggler-indicator {
+    background: $prussian-blue;
+    border-radius: 20rem;
+    display: inline-block;
+    height: 1rem;
+    margin-bottom: -0.1875rem;
+    position: relative;
+    width: 2rem;
+    &:before {
+      background: $ocean;
+      border-radius: 20rem;
+      content: '';
+      display: inline-block;
+      height: 1rem;
+      position: absolute;
+      width: 1rem;
+    }
+    &.right:before { right: 0; }
+  }
+}

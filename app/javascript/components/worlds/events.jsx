@@ -414,7 +414,7 @@ export default class Events extends React.Component {
                       e.preventDefault();
                       this.setState(prevState => ({ events: [],
                                                     reverseOrder: !prevState.reverseOrder }),
-                                    this.loadEvents);
+                                    () => this.loadEvents(0, events.length || perPage));
                     }} />
         {this.renderModes()}
         { mode === MODE_LIST ? (events || []).map(this.renderEvent)
