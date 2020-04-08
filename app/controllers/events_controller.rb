@@ -38,8 +38,7 @@ class EventsController < ByWorldController
       events_for_character(world.events
                                 .includes(:characters, :location, :participants)
                                 .where(params.permit(:location_id)),
-                           params[:character_id])
-      .order(params[:sort]&.to_sym, :starts, :ends)
+                           params[:character_id]).order(sort)
   end
 
   def events_for_character(events, character_id)

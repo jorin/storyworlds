@@ -34,9 +34,7 @@ class LocationsController < ByWorldController
 
   def locations
     @locations ||= begin
-                     locations = world.locations
-                                      .order(params[:sort]&.to_sym,
-                                             :starts, :ends)
+                     locations = world.locations.order(sort)
                      if params[:search].present?
                        locations = locations
                                    .where('name like ?', "%#{params[:search]}%")

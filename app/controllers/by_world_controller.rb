@@ -3,6 +3,15 @@
 class ByWorldController < ApplicationController
   private
 
+  def sort
+    sort_by = params[:sort_by]&.to_sym
+    if params[:sort_order] == 'desc'
+      { sort_by => :desc, starts: :desc, ends: :desc }
+    else
+      [sort_by, :starts, :ends]
+    end
+  end
+
   def page(collection)
     return collection if params[:per_page].blank?
 

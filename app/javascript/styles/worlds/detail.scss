@@ -115,3 +115,11 @@
 }
 
 .remove-on-save { text-decoration: line-through; }
+
+.sort-order {
+  &:before {
+    content: '↓';
+    display: 'inline';
+  }
+  &.desc:before { content: '↑'; }
+}

@@ -38,7 +38,7 @@ class CharactersController < ByWorldController
                              params[:starts],
                              params[:ends]),
       params[:search]
-    ).order(params[:sort]&.to_sym, :starts, :ends)
+    ).order(sort)
   end
 
   # filter to characters available within starts/ends params

@@ -112,6 +112,48 @@ RSpec.shared_examples 'read world items' do
       end
     end
   end
+
+  context 'when sorting' do
+    let!(:item1) do
+      create item_type, world: world, starts: 500, ends: 700, name: 'Drink'
+    end
+    let!(:item2) do
+      create item_type, world: world, starts: 200, ends: 600, name: 'Cranberry'
+    end
+    let!(:item3) do
+      create item_type, world: world, starts: 300, ends: 900, name: 'Banana'
+    end
+    let!(:item4) do
+      create item_type, world: world, starts: 700, ends: 800, name: 'Apple'
+    end
+    before { login(world.creator) }
+    subject { JSON.parse(response.body)[collection].map { |i| i['id'] } }
+
+    context 'when default sorting' do
+      before { get :index, format: :json, params: { world_slug: world.slug } }
+
+      it { is_expected.to eq [item2.id, item3.id, item1.id, item4.id] }
+    end
+
+    context 'when desc sorting' do
+      before do
+        get :index, format: :json, params: { sort_by: 'ends',
+                                             sort_order: 'desc',
+                                             world_slug: world.slug }
+      end
+
+      it { is_expected.to eq [item3.id, item4.id, item1.id, item2.id] }
+    end
+
+    context 'when sorting by attribute name' do
+      before do
+        get :index, format: :json, params: { sort_by: 'name',
+                                             world_slug: world.slug }
+      end
+
+      it { is_expected.to eq [item4.id, item3.id, item2.id, item1.id] }
+    end
+  end
 end
 
 RSpec.shared_examples 'name-searchable world items' do

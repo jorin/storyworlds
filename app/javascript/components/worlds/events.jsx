@@ -103,10 +103,12 @@ export default class Events extends React.Component {
 
   loadEvents = (from = this.state.events.length, perPage = this.state.perPage) => {
     const { character, eventsPath, location } = this.props;
+    const { reverseOrder } = this.state;
     const data = { characterId: character && character.id,
                    locationId: location && location.id,
                    from,
                    perPage };
+    if (reverseOrder) { Object.assign(data, { sortBy: 'ends', sortOrder: 'desc' }); }
 
     this.setState({ loading: true });
     $.ajax({
@@ -391,7 +393,7 @@ export default class Events extends React.Component {
   render() {
     const { MODE_LIST } = this.constructor;
     const { character, permissions: { write } } = this.props;
-    const { loading, event, events, mode, perPage, total } = this.state;
+    const { loading, event, events, mode, perPage, reverseOrder, total } = this.state;
 
     return (
       <div className='loader-container'>
@@ -406,6 +408,14 @@ export default class Events extends React.Component {
                                                                            : {},
                                                           location: null }); }}>+ Add Event</a> }
             </div> }
+        <a href='#'
+           className={`float-right sort-order ${ reverseOrder ? 'desc' : '' }`}
+           onClick={e => {
+                      e.preventDefault();
+                      this.setState(prevState => ({ events: [],
+                                                    reverseOrder: !prevState.reverseOrder }),
+                                    this.loadEvents);
+                    }} />
         {this.renderModes()}
         { mode === MODE_LIST ? (events || []).map(this.renderEvent)
                              : this.renderTimeline() }
