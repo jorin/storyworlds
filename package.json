@@ -26,6 +26,7 @@
   "devDependencies": {
     "babel-jest": "^25.3.0",
     "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
     "jest": "^25.3.0",
     "webpack-dev-server": "^3.9.0"
   },
@@ -47,7 +48,9 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
     },
-    "setupFilesAfterEnv": ["<rootDir>/app/javascript/tests/enzyme.jsx"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/app/javascript/tests/enzyme.jsx"
+    ],
     "transform": {
       "^.+\\.js(x?)$": "<rootDir>/node_modules/babel-jest"
     }
