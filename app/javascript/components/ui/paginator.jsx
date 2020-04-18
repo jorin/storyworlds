@@ -9,7 +9,7 @@ const Paginator = ({ className, loadedCount, handlePerPageChange, handlePage, pe
     </div> 
     <div className='small mb-3 mt-n1 text-muted'>Loaded</div>
     <div className='align-items-center small'>
-      <a href='#' onClick={e => { e.preventDefault(); handlePage(); }}><strong>Load</strong></a> another
+      <a href='#' className='' onClick={e => { e.preventDefault(); handlePage(); }}><strong>Load</strong></a> another
       <Creatable className='d-inline-block ml-2 form-select per-page-select' onChange={({ value }) => handlePerPageChange(value)}
                  classNamePrefix='react-select'
                  onInputChange={value => { const perPage = value && parseInt(value, 10); perPage && !isNaN(perPage) && handlePerPageChange(perPage); }}

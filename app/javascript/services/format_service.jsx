@@ -31,43 +31,10 @@ const FormatService = {
     else { return a.ends > b.ends ? 1 : -1; }
   },
 
-  timelineConversion: timelineUnits => {
-    if (typeof timelineUnits !== 'string') { return; }
-
-    const conversion = timelineUnits.split(':');
-    return conversion.length === 2 && { monthsInYear: conversion[0], daysInMonth: conversion[1] };
-  },
-
-  timelineConvertToSplits: (minute, { daysInMonth, monthsInYear }) => {
-    const isNegative = minute < 0;
-
-    const yearConversion = monthsInYear*daysInMonth*MINUTES_PER_DAY;
-    const yearOffset = isNegative && (Math.floor((-1*minute)/yearConversion) + 1);
-    if (isNegative) { minute += (yearOffset*yearConversion); }
-    const year = Math.floor(minute/yearConversion);
-    minute -= (year*yearConversion);
-
-    const monthConversion = daysInMonth*MINUTES_PER_DAY;
-    const month = Math.floor(minute/monthConversion);
-    minute -= (month*monthConversion);
-
-    const day = Math.floor(minute/MINUTES_PER_DAY);
-    minute -= day*MINUTES_PER_DAY;
-
-    let hour = Math.floor(minute/60);
-    minute -= (hour*60);
-
-    const meridian = hour > 11 ? 'pm' : 'am';
-    if (hour > 11) { hour -= 12; }
-    if (!hour) { hour = 12; }
-
-    return { year: isNegative ? -1*yearOffset : year, month: month + 1, day: day + 1, hour, minute, meridian };
-  },
-
   timelineEntryToValue: (entry, timelineUnits) => {
     if (!entry) { return; }
 
-    const conversion = FormatService.timelineConversion(timelineUnits);
+    const conversion = FormatService._timelineConversion(timelineUnits);
 
     if (conversion) {
       const { daysInMonth, monthsInYear } = conversion;
@@ -103,24 +70,59 @@ const FormatService = {
   timelineValueToDisplay: (timestamp, timelineUnits) => {
     if (typeof timestamp !== 'number') { return ''; }
 
-    const conversion = FormatService.timelineConversion(timelineUnits);
+    const conversion = FormatService._timelineConversion(timelineUnits);
 
     if (conversion) {
-      const { year, month, day, hour, minute, meridian } = FormatService.timelineConvertToSplits(timestamp, conversion);
+      const { year, month, day, hour, minute, meridian } = FormatService._timelineConvertToSplits(timestamp, conversion);
 
       return `year ${year} ${month}/${day} ${hour}:${ minute < 10 ? '0' : '' }${minute}${meridian}`;
     } else { return moment.unix(timestamp).format(STANDARD_TIMELINE_DISPLAY_FORMAT); }
   },
 
   timelineValueToEntry: (timestamp, timelineUnits) => {
-    const conversion = FormatService.timelineConversion(timelineUnits);
+    const conversion = FormatService._timelineConversion(timelineUnits);
 
     if (conversion) {
-      const { year, month, day, hour, minute, meridian } = FormatService.timelineConvertToSplits(timestamp, conversion);
+      const { year, month, day, hour, minute, meridian } = FormatService._timelineConvertToSplits(timestamp, conversion);
 
       return `${month}/${day}/${year} ${hour}:${ minute < 10 ? '0' : '' }${minute} ${meridian}`;
     } else { return moment.unix(timestamp).format(STANDARD_TIMELINE_PARSE_FORMAT); }
   },
+
+  _timelineConversion: timelineUnits => {
+    if (typeof timelineUnits !== 'string') { return; }
+
+    const conversion = timelineUnits.split(':');
+    return conversion.length === 2 && { monthsInYear: conversion[0], daysInMonth: conversion[1] };
+  },
+
+  _timelineConvertToSplits: (minute, { daysInMonth, monthsInYear }) => {
+    const isNegative = minute < 0;
+
+    const yearConversion = monthsInYear*daysInMonth*MINUTES_PER_DAY;
+    const yearOffset = isNegative && (Math.floor((-1*minute)/yearConversion) + 1);
+    if (isNegative) { minute += (yearOffset*yearConversion); }
+    const year = Math.floor(minute/yearConversion);
+    minute -= (year*yearConversion);
+
+    const monthConversion = daysInMonth*MINUTES_PER_DAY;
+    const month = Math.floor(minute/monthConversion);
+    minute -= (month*monthConversion);
+
+    const day = Math.floor(minute/MINUTES_PER_DAY);
+    minute -= day*MINUTES_PER_DAY;
+
+    let hour = Math.floor(minute/60);
+    minute -= (hour*60);
+
+    const meridian = hour > 11 ? 'pm' : 'am';
+    if (hour > 11) { hour -= 12; }
+    if (!hour) { hour = 12; }
+
+    return { year: isNegative ? -1*yearOffset : year, month: month + 1, day: day + 1, hour, minute, meridian };
+  },
 };
 
+window.moment = moment;
+window.fs = FormatService;
 export default FormatService;
