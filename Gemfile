@@ -53,6 +53,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'foreman'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
 end

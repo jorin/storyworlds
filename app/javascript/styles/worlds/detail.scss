@@ -8,19 +8,6 @@
 }
 
 .detail-cell {
-  @include media-breakpoint-up(md) {
-    .more-info {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height 0.5s, opacity 1s;
-    }
-    &:hover .more-info {
-      max-height: 1000px;
-      opacity: 1;
-      overflow: auto;
-    }
-  }
   .btn.float-right { margin: 0 -30px 20px 20px; }
 }
 
