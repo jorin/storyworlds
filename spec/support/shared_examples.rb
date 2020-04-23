@@ -78,6 +78,53 @@ RSpec.shared_examples 'read world items' do
     end
   end
 
+  context 'when filtering to timeline' do
+    let!(:item1) { create item_type, world: world, starts: -100, ends: 200 }
+    let!(:item2) { create item_type, world: world, starts: 100, ends: 200 }
+    let!(:item3) { create item_type, world: world, starts: 300, ends: 450 }
+    let!(:item4) { create item_type, world: world, starts: 400, ends: 600 }
+    before do
+      login(world.creator)
+      get :index, format: :json,
+                  params: { world_slug: world.slug }.merge(filter_params)
+    end
+    subject { JSON.parse(response.body)[collection] }
+
+    context 'when filtering after, overlapping' do
+      let(:filter_params) { { filter_starts: 350 } }
+
+      it do
+        is_expected.to contain_exactly(hash_including('id' => item3.id),
+                                       hash_including('id' => item4.id))
+      end
+    end
+
+    context 'when filtering after, within' do
+      let(:filter_params) { { filter_starts: 350, filter_within: true } }
+
+      it { is_expected.to contain_exactly(hash_including('id' => item4.id)) }
+    end
+
+    context 'when filtering before, overlapping' do
+      let(:filter_params) { { filter_ends: 350 } }
+
+      it do
+        is_expected.to contain_exactly(hash_including('id' => item1.id),
+                                       hash_including('id' => item2.id),
+                                       hash_including('id' => item3.id))
+      end
+    end
+
+    context 'when filtering before, within' do
+      let(:filter_params) { { filter_ends: 350, filter_within: true } }
+
+      it do
+        is_expected.to contain_exactly(hash_including('id' => item1.id),
+                                       hash_including('id' => item2.id))
+      end
+    end
+  end
+
   context 'when paginating' do
     let!(:item1) { create item_type, world: world, starts: 500 }
     let!(:item2) { create item_type, world: world, starts: 200 }
@@ -152,6 +199,62 @@ RSpec.shared_examples 'read world items' do
       end
 
       it { is_expected.to eq [item4.id, item3.id, item2.id, item1.id] }
+    end
+  end
+end
+
+RSpec.shared_examples 'timeline filter world items with nil-able timelines' do
+  let(:collection) do
+    described_class.to_s.underscore.gsub(/_controller$/, '')
+  end
+  let(:item_type) { collection.singularize.to_sym }
+  let(:creator) { create :user }
+  let(:world) { create :world, creator: creator }
+  let!(:item1) { create item_type, world: world }
+  let!(:item2) { create item_type, world: world, starts: 100 }
+  let!(:item3) { create item_type, world: world, ends: 450 }
+  let!(:item4) { create item_type, world: world, starts: 150, ends: 300 }
+  before do
+    login(world.creator)
+    get :index, format: :json,
+                params: { world_slug: world.slug }.merge(filter_params)
+  end
+  subject { JSON.parse(response.body)[collection] }
+
+  context 'when filtering after, overlapping' do
+    let(:filter_params) { { filter_starts: 350 } }
+
+    it do
+      is_expected.to contain_exactly(hash_including('id' => item1.id),
+                                     hash_including('id' => item2.id),
+                                     hash_including('id' => item3.id))
+    end
+  end
+
+  context 'when filtering after, within' do
+    let(:filter_params) { { filter_starts: 100, filter_within: true } }
+
+    it do
+      is_expected.to contain_exactly(hash_including('id' => item2.id),
+                                     hash_including('id' => item4.id))
+    end
+  end
+
+  context 'when filtering before, overlapping' do
+    let(:filter_params) { { filter_ends: 120 } }
+
+    it do
+      is_expected.to contain_exactly(hash_including('id' => item1.id),
+                                     hash_including('id' => item2.id),
+                                     hash_including('id' => item3.id))
+    end
+  end
+
+  context 'when filtering before, within' do
+    let(:filter_params) { { filter_ends: 350, filter_within: true } }
+
+    it do
+      is_expected.to contain_exactly(hash_including('id' => item4.id))
     end
   end
 end

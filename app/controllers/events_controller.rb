@@ -34,11 +34,7 @@ class EventsController < ByWorldController
   end
 
   def events
-    @events ||=
-      events_for_character(world.events
-                                .includes(:characters, :location, :participants)
-                                .where(params.permit(:location_id)),
-                           params[:character_id]).order(sort)
+    @events ||= in_timeline(filtered_events)
   end
 
   def events_for_character(events, character_id)
@@ -67,6 +63,13 @@ class EventsController < ByWorldController
                         .create!(params.require(:location)
                                         .permit(:ends, :name, :starts)
                                         .merge(creator: current_user)).id }
+  end
+
+  def filtered_events
+    events_for_character(world.events
+                              .includes(:characters, :location, :participants)
+                              .where(params.permit(:location_id)),
+                         params[:character_id]).order(sort)
   end
 
   def permit_event_update

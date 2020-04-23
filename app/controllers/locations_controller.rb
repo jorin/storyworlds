@@ -23,6 +23,15 @@ class LocationsController < ByWorldController
 
   private
 
+  def filtered_locations
+    locations = world.locations.order(sort)
+    if params[:search].present?
+      locations = locations
+                  .where('name like ?', "%#{params[:search]}%")
+    end
+    locations
+  end
+
   def location
     @location ||= world&.locations&.find_by(id: params[:id])
   end
@@ -33,14 +42,7 @@ class LocationsController < ByWorldController
   end
 
   def locations
-    @locations ||= begin
-                     locations = world.locations.order(sort)
-                     if params[:search].present?
-                       locations = locations
-                                   .where('name like ?', "%#{params[:search]}%")
-                     end
-                     locations
-                   end
+    @locations ||= in_timeline(filtered_locations)
   end
 
   def permit_location_update

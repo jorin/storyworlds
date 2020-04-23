@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert } from 'react-bootstrap';
+import FiltersService from 'services/filters_service';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Paginator from 'components/ui/paginator';
@@ -30,7 +31,12 @@ export default class Items extends React.Component {
 
   componentDidMount() { this.loadItems(); };
   // allow reloading flag to catch an external change
-  componentDidUpdate(prevProps, prevState) { prevProps.reload !== this.props.reload && this.loadItems(); };
+  componentDidUpdate(prevProps, prevState) {
+    if (!FiltersService.equal(prevProps.filters, this.props.filters)) { this.handleRefresh(); }
+    else if (prevProps.reload !== this.props.reload) { this.loadItems(); }
+  };
+
+  handleRefresh = () => this.setState({ [this.props.itemsKey]: [] }, this.loadItems);
 
   handleSave = e => {
     if (e) { e.preventDefault(); }
@@ -74,9 +80,10 @@ export default class Items extends React.Component {
   };
 
   loadItems = (from = this.state[this.props.itemsKey].length, perPage = this.state.perPage) => {
-    const { itemsKey, itemsPath } = this.props;
+    const { filters, itemsKey, itemsPath } = this.props;
     const { reverseOrder, sortBy } = this.state;
     const data = { from, perPage };
+    Object.assign(data, FiltersService.asParams(filters));
     if (reverseOrder) { Object.assign(data, { sortBy: 'ends', sortOrder: 'desc' }); }
     if (sortBy) { Object.assign(data, { sortBy }); }
 
@@ -289,6 +296,7 @@ export default class Items extends React.Component {
 };
 
 Items.propTypes = {
+  filters: PropTypes.object,
   itemKey: PropTypes.string.isRequired,
   itemLabel: PropTypes.string.isRequired,
   itemsKey: PropTypes.string.isRequired,

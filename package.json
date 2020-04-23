@@ -14,6 +14,7 @@
     "draft-js-import-html": "^1.4.1",
     "jquery": "^3.4.1",
     "jquery-ujs": "^1.2.2",
+    "js-cookie": "^2.2.1",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
@@ -27,6 +28,7 @@
     "babel-jest": "^25.3.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^25.3.0",
     "webpack-dev-server": "^3.9.0"
   },
@@ -46,7 +48,9 @@
       "<rootDir>/app/javascript"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
+      "^@/(.*)$": "<rootDir>/$1",
+      "^styles\/(.*)": "identity-obj-proxy",
+      "\\.(css|scss)$": "identity-obj-proxy"
     },
     "setupFilesAfterEnv": [
       "<rootDir>/app/javascript/tests/enzyme.jsx"

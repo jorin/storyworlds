@@ -6,6 +6,7 @@ RSpec.describe CharactersController, type: :controller do
   describe 'GET #index' do
     it_behaves_like 'read world items'
     it_behaves_like 'name-searchable world items'
+    it_behaves_like 'timeline filter world items with nil-able timelines'
 
     context 'searching for available characters within a timeline' do
       let(:world) { create :world }

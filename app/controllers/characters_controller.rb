@@ -33,12 +33,7 @@ class CharactersController < ByWorldController
   end
 
   def characters
-    @characters ||= matched_characters(
-      characters_in_timeline(world.characters,
-                             params[:starts],
-                             params[:ends]),
-      params[:search]
-    ).order(sort)
+    @characters ||= in_timeline(filtered_characters)
   end
 
   # filter to characters available within starts/ends params
@@ -55,6 +50,15 @@ class CharactersController < ByWorldController
               .where('characters.starts is NULL or '\
                      'characters.starts <= ?', ends)
               .where('characters.ends is NULL or characters.ends >= ?', starts)
+  end
+
+  def filtered_characters
+    matched_characters(
+      characters_in_timeline(world.characters,
+                             params[:starts],
+                             params[:ends]),
+      params[:search]
+    ).order(sort)
   end
 
   def matched_characters(characters, search)

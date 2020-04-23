@@ -15,7 +15,7 @@ export default class TimelineInput extends React.Component {
     const { onChange, timelineUnits } = this.props;
 
     const rawValue = FormatService.timelineEntryToValue(value, timelineUnits);
-    if (!isNaN(rawValue)) { onChange(rawValue); }
+    if (!isNaN(rawValue) || rawValue === undefined) { onChange(rawValue); }
 
     this.setState({ editValue: value });
   };
@@ -33,13 +33,13 @@ export default class TimelineInput extends React.Component {
   };
 
   render() {
-    const { placeholder } = this.props;
+    const { onBlur, placeholder } = this.props;
     const { editing, editValue } = this.state;
 
     return (
       <input type='TEXT'
              className='form-control text-center'
-             onBlur={e => this.setState({ editing: false })}
+             onBlur={e => this.setState({ editing: false }, () => onBlur && onBlur())}
              onChange={this.handleChange}
              onFocus={this.handleFocus}
              onKeyDown={({ keyCode, which }) => ((keyCode || which) === 13) && this.input && this.input.blur()}
@@ -51,6 +51,7 @@ export default class TimelineInput extends React.Component {
 };
 
 TimelineInput.propTypes = {
+  onBlur: PropTypes.func,
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   timelineUnits: PropTypes.string,

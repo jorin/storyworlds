@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import HtmlArea from 'components/ui/html_area';
 import Contributors from './contributors';
 import Events from './events';
+import FiltersPanel from 'components/ui/filters_panel';
+import FiltersService from 'services/filters_service';
+import HtmlArea from 'components/ui/html_area';
 import Items from './items';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
@@ -12,6 +14,7 @@ export default class Detail extends React.Component {
     super(props);
 
     this.state = {
+      filters: FiltersService.retrieve(),
       world: JSON.parse(JSON.stringify(props.world)),
     };
   };
@@ -94,7 +97,7 @@ export default class Detail extends React.Component {
     const { SECTION_CHARACTERS, SECTION_CONTRIBUTORS, SECTION_EVENTS, SECTION_LOCATIONS } = this.constructor;
     const { charactersProps, contributorsProps, eventsProps, locationsProps,
             permissions, world: { timelineUnits }, userId } = this.props;
-    const { reload } = this.state;
+    const { filters, reload } = this.state;
 
     return (
       <div className='container'>
@@ -105,21 +108,24 @@ export default class Detail extends React.Component {
           {this.renderNav()}
           <div id='events'>
             <h2>{SECTION_EVENTS}</h2>
-            <Events handleTriggerReload={() => this.setState(({ reload }) => ({ reload: !reload }))}
+            <Events filters={filters}
+                    handleTriggerReload={() => this.setState(({ reload }) => ({ reload: !reload }))}
                     permissions={permissions}
                     userId={userId}
                     {...eventsProps} />
           </div>
           <div id='characters'>
             <h2>{SECTION_CHARACTERS}</h2>
-            <Items permissions={permissions}
+            <Items filters={filters}
+                   permissions={permissions}
                    timelineUnits={timelineUnits}
                    userId={userId}
                    {...charactersProps} />
           </div>
           <div id='locations'>
             <h2>{SECTION_LOCATIONS}</h2>
-            <Items permissions={permissions}
+            <Items filters={filters}
+                   permissions={permissions}
                    reload={reload}
                    timelineUnits={timelineUnits}
                    userId={userId}
@@ -131,6 +137,9 @@ export default class Detail extends React.Component {
               <Contributors {...contributorsProps} />
             </div> }
         </div>
+        <FiltersPanel filters={filters}
+                      handleFiltersChange={filters => this.setState({ filters })}
+                      timelineUnits={timelineUnits} />
       </div>
     );
   };

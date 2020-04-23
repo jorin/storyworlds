@@ -3,13 +3,30 @@
 class ByWorldController < ApplicationController
   private
 
-  def sort
-    sort_by = params[:sort_by]&.to_sym
-    if params[:sort_order] == 'desc'
-      { sort_by => :desc, starts: :desc, ends: :desc }
-    else
-      [sort_by, :starts, :ends]
+  def in_timeline(collection)
+    in_timeline_after_starts(in_timeline_before_ends(collection))
+  end
+
+  def in_timeline_after_starts(collection)
+    return collection if params[:filter_starts].blank?
+
+    coll = collection.where('ends >= ? OR ends IS NULL',
+                            params[:filter_starts])
+    if ActiveRecord::Type::Boolean.new.deserialize(params[:filter_within])
+      coll = collection.where('starts >= ?', params[:filter_starts])
     end
+    coll
+  end
+
+  def in_timeline_before_ends(collection)
+    return collection if params[:filter_ends].blank?
+
+    coll = collection.where('starts <= ? OR starts IS NULL',
+                            params[:filter_ends])
+    if ActiveRecord::Type::Boolean.new.deserialize(params[:filter_within])
+      coll = collection.where('ends <= ?', params[:filter_ends])
+    end
+    coll
   end
 
   def page(collection)
@@ -32,6 +49,15 @@ class ByWorldController < ApplicationController
 
   def permit_write
     not_found unless world.can_write?(session[:user_id])
+  end
+
+  def sort
+    sort_by = params[:sort_by]&.to_sym
+    if params[:sort_order] == 'desc'
+      { sort_by => :desc, starts: :desc, ends: :desc }
+    else
+      [sort_by, :starts, :ends]
+    end
   end
 
   def world

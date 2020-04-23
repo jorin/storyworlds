@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Alert } from 'react-bootstrap';
 import Async from 'react-select/async';
+import FiltersService from 'services/filters_service';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Paginator from 'components/ui/paginator';
@@ -28,6 +29,12 @@ export default class Events extends React.Component {
   static MODE_TIMELINE = 'timeline';
 
   componentDidMount() { this.loadEvents(); };
+
+  componentDidUpdate(prevProps, prevState) {
+    !FiltersService.equal(prevProps.filters, this.props.filters) && this.handleRefresh();
+  };
+
+  handleRefresh = () => this.setState({ events: [] }, this.loadEvents);
 
   handleSave = e => {
     if (e) { e.preventDefault(); }
@@ -102,12 +109,13 @@ export default class Events extends React.Component {
   };
 
   loadEvents = (from = this.state.events.length, perPage = this.state.perPage) => {
-    const { character, eventsPath, location } = this.props;
+    const { character, eventsPath, filters, location } = this.props;
     const { reverseOrder } = this.state;
     const data = { characterId: character && character.id,
                    locationId: location && location.id,
                    from,
                    perPage };
+    Object.assign(data, FiltersService.asParams(filters));
     if (reverseOrder) { Object.assign(data, { sortBy: 'ends', sortOrder: 'desc' }); }
 
     this.setState({ loading: true });
@@ -438,6 +446,7 @@ Events.propTypes = {
   character: PropTypes.object,
   charactersPath: PropTypes.string.isRequired,
   eventsPath: PropTypes.string.isRequired,
+  filters: PropTypes.object,
   location: PropTypes.object,
   locationsPath: PropTypes.string.isRequired,
   handleTriggerReload: PropTypes.func,
