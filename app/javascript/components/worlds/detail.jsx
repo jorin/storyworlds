@@ -96,7 +96,7 @@ export default class Detail extends React.Component {
   render() {
     const { SECTION_CHARACTERS, SECTION_CONTRIBUTORS, SECTION_EVENTS, SECTION_LOCATIONS } = this.constructor;
     const { charactersProps, contributorsProps, eventsProps, locationsProps,
-            permissions, world: { timelineUnits }, userId } = this.props;
+            permissions, tagsPath, world: { timelineUnits }, userId } = this.props;
     const { filters, reload } = this.state;
 
     return (
@@ -111,6 +111,7 @@ export default class Detail extends React.Component {
             <Events filters={filters}
                     handleTriggerReload={() => this.setState(({ reload }) => ({ reload: !reload }))}
                     permissions={permissions}
+                    tagsPath={tagsPath}
                     userId={userId}
                     {...eventsProps} />
           </div>
@@ -118,6 +119,7 @@ export default class Detail extends React.Component {
             <h2>{SECTION_CHARACTERS}</h2>
             <Items filters={filters}
                    permissions={permissions}
+                   tagsPath={tagsPath}
                    timelineUnits={timelineUnits}
                    userId={userId}
                    {...charactersProps} />
@@ -127,6 +129,7 @@ export default class Detail extends React.Component {
             <Items filters={filters}
                    permissions={permissions}
                    reload={reload}
+                   tagsPath={tagsPath}
                    timelineUnits={timelineUnits}
                    userId={userId}
                    {...locationsProps} />
@@ -151,6 +154,7 @@ Detail.propTypes = {
   eventsProps: PropTypes.object.isRequired,
   locationsProps: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
+  tagsPath: PropTypes.string.isRequired,
   userId: PropTypes.number,
   world: PropTypes.object.isRequired,
   worldPath: PropTypes.string.isRequired,

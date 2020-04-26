@@ -47,13 +47,11 @@ class EventsController < ByWorldController
     event_params = params.require(:event)
                          .permit(:id, :description, :ends, :location_id,
                                  :name, :starts,
-                                 participants: %i[id character_id _destroy])
+                                 participants: %i[id character_id _destroy],
+                                 taggings: [:id, :_destroy,
+                                            tag: %i[id name slug]])
                          .merge(event_location_params || {})
-    if event_params[:participants].present?
-      event_params[:participants_attributes] = event_params
-                                               .delete(:participants)
-    end
-    event_params
+    format_related_params!(event_params)
   end
 
   def event_location_params
@@ -67,9 +65,20 @@ class EventsController < ByWorldController
 
   def filtered_events
     events_for_character(world.events
-                              .includes(:characters, :location, :participants)
+                              .includes(:characters, :location, :participants,
+                                        :taggings, :tags)
                               .where(params.permit(:location_id)),
                          params[:character_id]).order(sort)
+  end
+
+  def format_related_params!(event_params)
+    if event_params[:participants].present?
+      event_params[:participants_attributes] = event_params
+                                               .delete(:participants)
+    end
+    format_tag_params!(event_params)
+
+    event_params
   end
 
   def permit_event_update

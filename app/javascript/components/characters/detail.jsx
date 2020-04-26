@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import HtmlArea from 'components/ui/html_area';
+import TagsEditor from 'components/ui/tags_editor';
 import Events from 'components/worlds/events';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
@@ -61,13 +62,31 @@ export default class Detail extends React.Component {
     );
   };
 
+  renderTags() {
+    const { permissions: { manage }, tagsPath, userId } = this.props;
+    const { character, character: { creatorId, taggings } } = this.state;
+
+    return manage || creatorId === userId ? <TagsEditor handleUpdateTaggings={taggings => this.setState(({ character }) => ({ character: Object.assign({},
+                                                                                                                                                       character,
+                                                                                                                                                       { taggings }) }), this.handleSave)}
+                                                        taggings={taggings || []}
+                                                        tagsPath={tagsPath} />
+                                          : <div className= 'my-3'>
+                                              { taggings &&
+                                                !!taggings.length &&
+                                                taggings.map(({ tag: { name, slug } }) => <span key={slug}
+                                                                                                className='badge badge-secondary badge-pill font-weight-light mb-2 mr-2'>{name}</span>) }
+                                            </div>;
+  };
+
   render() {
-    const { charactersPath, eventsPath, locationsPath, permissions, timelineUnits, userId } = this.props;
+    const { charactersPath, eventsPath, locationsPath, permissions, tagsPath, timelineUnits, userId } = this.props;
     const { character } = this.state;
 
     return (
       <div className='container'>
         {this.renderDescription()}
+        {this.renderTags()}
         <hr />
         <div className='character-content'>
           <div id='events'>
@@ -76,6 +95,7 @@ export default class Detail extends React.Component {
                     eventsPath={eventsPath}
                     locationsPath={locationsPath}
                     permissions={permissions}
+                    tagsPath={tagsPath}
                     timelineUnits={timelineUnits}
                     userId={userId} />
           </div>
@@ -91,6 +111,7 @@ Detail.propTypes = {
   eventsPath: PropTypes.string.isRequired,
   locationsPath: PropTypes.string.isRequired,
   permissions: PropTypes.object.isRequired,
+  tagsPath: PropTypes.string.isRequired,
   timelineUnits: PropTypes.string,
   userId: PropTypes.number,
 };

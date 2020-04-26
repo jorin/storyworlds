@@ -5,6 +5,10 @@ class Character < ApplicationRecord
   belongs_to :world, inverse_of: :characters
   has_many :participants
   has_many :events, through: :participants
+  has_many :taggings, as: :tagged, dependent: :destroy
+  has_many :tags, through: :taggings
+
+  accepts_nested_attributes_for :taggings, allow_destroy: true
 
   validates :name, presence: true
   validates_presence_of :creator
@@ -12,6 +16,14 @@ class Character < ApplicationRecord
   validate :validate_starts_ends
 
   html_fragment :description, scrub: :strip
+
+  def to_full_h
+    attributes
+      .merge(taggings: taggings.map do |tagging|
+                         tagging.attributes
+                                .merge(tag: tagging.tag.attributes)
+                       end)
+  end
 
   private
 

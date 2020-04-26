@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# controllers
 RSpec.shared_examples 'read world items' do
   let(:collection) do
     described_class.to_s.underscore.gsub(/_controller$/, '')
@@ -302,6 +301,26 @@ RSpec.shared_examples 'create world item' do |additional_params = {}|
       expect(JSON.parse(response.body))
         .to include(item_attributes.to_camelback_keys.stringify_keys)
     end
+
+    context 'when adding and creating tags' do
+      let(:add_tag) { create :tag, world: world }
+      let(:create_tag) { attributes_for :tag }
+      let(:item_attributes) do
+        attributes_for(item_type)
+          .merge(taggings: { '0' => { tag: add_tag.attributes },
+                             '1' => { tag: create_tag } })
+      end
+      subject do
+        JSON.parse(response.body)['taggings']
+            .map { |t| t['tag'].slice('name', 'slug') }
+      end
+
+      it do
+        is_expected
+          .to contain_exactly add_tag.attributes.slice('name', 'slug'),
+                              create_tag.stringify_keys
+      end
+    end
   end
 
   shared_examples 'disallowed' do
@@ -386,6 +405,39 @@ RSpec.shared_examples 'update world item' do
       expect(JSON.parse(response.body))
         .to include(item_attributes.to_camelback_keys.stringify_keys)
     end
+
+    context 'when adding, creating, and deleting tags' do
+      let(:add_tag) { create :tag, world: world }
+      let(:create_tag) { attributes_for :tag }
+      let(:remove_tag) do
+        tag = create :tag, world: world
+        item.tags << tag
+        tag
+      end
+      let(:remove_tagging_id) do
+        item.taggings
+            .find_by(tag_id: remove_tag.id)
+            .id
+      end
+      let(:item_attributes) do
+        attributes_for(item_type)
+          .merge(taggings: { '0' => { tag: add_tag.attributes },
+                             '1' => { tag: create_tag },
+                             '2' => { _destroy: true,
+                                      id: remove_tagging_id,
+                                      tag: remove_tag.attributes } })
+      end
+      subject do
+        JSON.parse(response.body)['taggings']
+            .map { |t| t['tag'].slice('name', 'slug') }
+      end
+
+      it do
+        is_expected
+          .to contain_exactly add_tag.attributes.slice('name', 'slug'),
+                              create_tag.stringify_keys
+      end
+    end
   end
 
   shared_examples 'disallowed' do
@@ -451,50 +503,5 @@ RSpec.shared_examples 'update world item' do
 
     it { expect(response).to have_http_status :bad_request }
     it { expect(JSON.parse(response.body)['error']).to be_present }
-  end
-end
-
-# models
-RSpec.shared_examples 'has optional timeline' do
-  let(:starts) { nil }
-  let(:ends) { nil }
-  subject do
-    build described_class.to_s.underscore.to_sym,
-          starts: starts, ends: ends
-  end
-
-  it { is_expected.to be_valid }
-
-  context 'when starts' do
-    let(:starts) { 1000 }
-
-    it { is_expected.to be_valid }
-  end
-
-  context 'when ends' do
-    let(:ends) { 1000 }
-
-    it { is_expected.to be_valid }
-  end
-
-  context 'when starts before ends' do
-    let(:starts) { 1000 }
-    let(:ends) { 2000 }
-
-    it { is_expected.to be_valid }
-  end
-
-  context 'when starts is ends' do
-    let(:starts) { 1000 }
-    let(:ends) { 1000 }
-
-    it { is_expected.to be_valid }
-  end
-
-  context 'when starts after ends' do
-    let(:starts) { 2000 }
-    let(:ends) { 1000 }
-
-    it { is_expected.to_not be_valid }
   end
 end

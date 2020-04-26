@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     resources :characters
     resources :events
     resources :locations
+    resources :tags, only: %i[index]
     resources :world_permissions, only: %i[create destroy update]
   end
 end

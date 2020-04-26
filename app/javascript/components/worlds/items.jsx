@@ -5,6 +5,7 @@ import FiltersService from 'services/filters_service';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Paginator from 'components/ui/paginator';
+import TagsEditor from 'components/ui/tags_editor';
 import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
@@ -97,8 +98,8 @@ export default class Items extends React.Component {
   };
 
   renderForm = () => {
-    const { itemKey, itemLabel, timelineUnits } = this.props;
-    const { error, [itemKey]: { description, ends, id, name, starts } } = this.state;
+    const { itemKey, itemLabel, tagsPath, timelineUnits } = this.props;
+    const { error, [itemKey]: { description, ends, id, name, starts, taggings } } = this.state;
     const handleUpdate = (field, value) => this.setState(prevState => ({ [itemKey]: Object.assign({}, prevState[itemKey], { [field]: value }) }));
 
     return (
@@ -144,6 +145,12 @@ export default class Items extends React.Component {
           </div>
         </div>
         <div className='form-group'>
+          <TagsEditor handleUpdateTaggings={taggings => handleUpdate('taggings', taggings)}
+                      stacked
+                      taggings={taggings || []}
+                      tagsPath={tagsPath} />
+        </div>
+        <div className='form-group'>
           <a href='#'
              className='btn btn-primary btn-block'
              onClick={this.handleSave}>Save {itemLabel}</a>
@@ -154,7 +161,7 @@ export default class Items extends React.Component {
 
   renderItemCol = item => {
     const { itemKey, itemsPath, timelineUnits } = this.props;
-    const { creatorId, description, id, name, starts, ends } = item;
+    const { creatorId, description, id, name, starts, ends, taggings } = item;
     const editable = this.isEditable(creatorId);
     const colClass = this.state[itemKey] ? 'col-sm-12'
                                          : 'col-md-4 col-sm-6';
@@ -172,6 +179,12 @@ export default class Items extends React.Component {
           <TimelineLabel starts={starts}
                          ends={ends}
                          timelineUnits={timelineUnits} />
+          <div className= 'my-3'>
+            { taggings &&
+              !!taggings.length &&
+              taggings.map(({ tag: { name, slug } }) => <span key={slug}
+                                                              className='badge badge-secondary badge-pill font-weight-light mb-2 mr-2'>{name}</span>) }
+          </div>
         </div>
       </div>
     );
@@ -303,6 +316,7 @@ Items.propTypes = {
   itemsPath: PropTypes.string.isRequired,
   permissions: PropTypes.object.isRequired,
   reload: PropTypes.bool,
+  tagsPath: PropTypes.string.isRequired,
   timelineUnits: PropTypes.string,
   userId: PropTypes.number,
 };

@@ -6,6 +6,7 @@ import FiltersService from 'services/filters_service';
 import FormatService from 'services/format_service';
 import HtmlArea from 'components/ui/html_area';
 import Paginator from 'components/ui/paginator';
+import TagsEditor from 'components/ui/tags_editor';
 import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
@@ -57,7 +58,7 @@ export default class Events extends React.Component {
       const index = events.findIndex(({ id }) => event.id === id);
 
       // update the existing event if its been loaded into the page
-      if (index !== 1) {
+      if (index !== -1) {
         events[index] = event;
         events.sort(FormatService.sortByTimeline);
       }
@@ -211,7 +212,7 @@ export default class Events extends React.Component {
 
   renderEvent = event => {
     const { timelineUnits } = this.props;
-    const { creatorId, description, ends, id, location, name, participants, starts } = event;
+    const { creatorId, description, ends, id, location, name, participants, starts, taggings } = event;
     const editable = this.isEditable(creatorId);
 
     return (
@@ -236,6 +237,10 @@ export default class Events extends React.Component {
                   {participants.map(({ character: { id, name } }) => <span className='character-label text-muted' key={`character-${id}`}>{name}</span>)}
                 </p> }
               <div dangerouslySetInnerHTML={{ __html: description }} />
+              { taggings &&
+                !!taggings.length &&
+                taggings.map(({ tag: { name, slug } }) => <span key={slug}
+                                                                className='badge badge-secondary badge-pill font-weight-light mb-2 mr-2'>{name}</span>) }
             </div>
           </div>
         </div>
@@ -244,8 +249,8 @@ export default class Events extends React.Component {
   };
 
   renderForm() {
-    const { character, timelineUnits } = this.props;
-    const { error, event: { description, ends, id, name, participants, starts } } = this.state;
+    const { character, tagsPath, timelineUnits } = this.props;
+    const { error, event: { description, ends, id, name, participants, starts, taggings } } = this.state;
     const location = this.props.location || this.state.event.location;
     const handleUpdate = (field, value) => this.setState(({ event }) => ({ event: Object.assign({}, event, { [field]: value }) }));
     const eventFor = character || location;
@@ -310,6 +315,12 @@ export default class Events extends React.Component {
         </div>
         <div className='form-group'>
           <div className='row'>{participants && participants.map(this.renderParticipantCol)}</div>
+        </div>
+        <label>tags</label>
+        <div className='form-group'>
+          <TagsEditor handleUpdateTaggings={taggings => handleUpdate('taggings', taggings)}
+                      taggings={taggings || []}
+                      tagsPath={tagsPath} />
         </div>
         <div className='form-group'>
           <a href='#'
@@ -451,6 +462,7 @@ Events.propTypes = {
   locationsPath: PropTypes.string.isRequired,
   handleTriggerReload: PropTypes.func,
   permissions: PropTypes.object.isRequired,
+  tagsPath: PropTypes.string.isRequired,
   timelineUnits: PropTypes.string,
   userId: PropTypes.number,
 };

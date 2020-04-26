@@ -3,6 +3,30 @@
 class ByWorldController < ApplicationController
   private
 
+  def add_tag_to_tagging!(tagging, new_tags)
+    tagging[:tag_id] = tagging[:tag][:id] ||
+                       new_tags
+                       .find { |tag| tag.slug == tagging[:tag][:slug] }.id
+    tagging.delete(:tag)
+  end
+
+  def create_associate_tags!(base_params, taggings)
+    new_tags = world.tags
+                    .create(taggings.select { |_, v| v[:tag][:id].blank? }
+                                    .values.map { |t| t[:tag] })
+    taggings.each { |_, tagging| add_tag_to_tagging!(tagging, new_tags) }
+    base_params[:taggings_attributes] = taggings
+  end
+
+  def format_tag_params!(base_params)
+    if base_params[:taggings].present?
+      create_associate_tags!(base_params,
+                             base_params.delete(:taggings))
+    end
+
+    base_params
+  end
+
   def in_timeline(collection)
     in_timeline_after_starts(in_timeline_before_ends(collection))
   end

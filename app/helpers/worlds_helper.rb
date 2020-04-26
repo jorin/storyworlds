@@ -8,8 +8,9 @@ module WorldsHelper
       events_props: events_props,
       locations_props: locations_props,
       permissions: world_permissions_props,
+      tags_path: world_tags_path(@world.slug),
       user_id: session[:user_id],
-      worldPath: world_path(@world.slug),
+      world_path: world_path(@world.slug),
       world: @world.attributes
     }.to_camelback_keys.to_json
   end

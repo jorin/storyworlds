@@ -55,8 +55,10 @@ RSpec.describe Event, type: :model do
     let(:world) { create :world }
     let(:location) { create :location, world: world }
     let(:characters) { create_list :character, 3, world: world }
+    let(:tags) { create_list :tag, 2, world: world }
     let(:event) do
-      create :event, location: location, world: world, characters: characters
+      create :event, location: location, world: world,
+                     characters: characters, tags: tags
     end
     let(:full_event_h) do
       participants = event.participants
@@ -64,8 +66,14 @@ RSpec.describe Event, type: :model do
                             p.attributes
                              .merge(character: p.character.attributes)
                           end
+      taggings = event.taggings
+                      .map do |t|
+                        t.attributes
+                         .merge(tag: t.tag.attributes)
+                      end
       event.attributes.merge(location: location.attributes,
-                             participants: participants)
+                             participants: participants,
+                             taggings: taggings)
     end
     subject { event.to_full_event_h }
 

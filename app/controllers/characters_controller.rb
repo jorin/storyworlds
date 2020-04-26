@@ -7,7 +7,7 @@ class CharactersController < ByWorldController
   before_action :permit_write, only: %i[create]
 
   def index
-    render json: { characters: page(characters).map(&:attributes),
+    render json: { characters: page(characters).map(&:to_full_h),
                    total: characters.size }.to_camelback_keys
   end
 
@@ -28,12 +28,15 @@ class CharactersController < ByWorldController
   end
 
   def character_params
-    params.require(:character)
-          .permit(:id, :description, :ends, :name, :starts)
+    character_params = params.require(:character)
+                             .permit(:id, :description, :ends, :name, :starts,
+                                     taggings: [:id, :_destroy,
+                                                tag: %i[id name slug]])
+    format_tag_params!(character_params)
   end
 
   def characters
-    @characters ||= in_timeline(filtered_characters)
+    @characters ||= in_timeline(filtered_characters).includes(:taggings, :tags)
   end
 
   # filter to characters available within starts/ends params
@@ -77,7 +80,7 @@ class CharactersController < ByWorldController
 
   def render_for_character(success)
     if success
-      render json: character.attributes.to_camelback_keys
+      render json: character.to_full_h.to_camelback_keys
     else
       render json: { error: character.errors.full_messages.join('; ') },
              status: :bad_request

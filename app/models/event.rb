@@ -6,8 +6,11 @@ class Event < ApplicationRecord
   belongs_to :world, inverse_of: :events
   has_many :participants
   has_many :characters, through: :participants
+  has_many :taggings, as: :tagged, dependent: :destroy
+  has_many :tags, through: :taggings
 
   accepts_nested_attributes_for :participants, allow_destroy: true
+  accepts_nested_attributes_for :taggings, allow_destroy: true
 
   validates :name, presence: true
   validates :ends, presence: true,
@@ -22,7 +25,8 @@ class Event < ApplicationRecord
 
   def to_full_event_h
     attributes.merge(location: location.attributes,
-                     participants: participants_attributes)
+                     participants: participants_attributes,
+                     taggings: taggings_attributes)
   end
 
   private
@@ -44,6 +48,11 @@ class Event < ApplicationRecord
   def participants_attributes
     participants
       .map { |p| p.attributes.merge(character: p.character.attributes) }
+  end
+
+  def taggings_attributes
+    taggings
+      .map { |t| t.attributes.merge(tag: t.tag.attributes) }
   end
 
   def validate_location_timeline

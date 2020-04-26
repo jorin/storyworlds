@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_28_211733) do
+ActiveRecord::Schema.define(version: 2020_04_25_162958) do
 
   create_table "characters", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
@@ -62,6 +62,23 @@ ActiveRecord::Schema.define(version: 2020_03_28_211733) do
     t.index ["event_id"], name: "index_participants_on_event_id"
   end
 
+  create_table "taggings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "tag_id", null: false
+    t.string "tagged_type", null: false
+    t.bigint "tagged_id", null: false
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["tagged_type", "tagged_id"], name: "index_taggings_on_tagged_type_and_tagged_id"
+  end
+
+  create_table "tags", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "slug", null: false
+    t.bigint "world_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["world_id"], name: "index_tags_on_world_id"
+  end
+
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
@@ -100,6 +117,8 @@ ActiveRecord::Schema.define(version: 2020_03_28_211733) do
   add_foreign_key "events", "worlds"
   add_foreign_key "locations", "users", column: "creator_id"
   add_foreign_key "locations", "worlds"
+  add_foreign_key "taggings", "tags"
+  add_foreign_key "tags", "worlds"
   add_foreign_key "world_permissions", "users"
   add_foreign_key "world_permissions", "worlds"
   add_foreign_key "worlds", "users", column: "creator_id"

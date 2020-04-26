@@ -7,7 +7,7 @@ class LocationsController < ByWorldController
   before_action :permit_write, only: %i[create]
 
   def index
-    render json: { locations: page(locations).map(&:attributes),
+    render json: { locations: page(locations).map(&:to_full_h),
                    total: locations.size }.to_camelback_keys
   end
 
@@ -24,7 +24,7 @@ class LocationsController < ByWorldController
   private
 
   def filtered_locations
-    locations = world.locations.order(sort)
+    locations = world.locations.includes(:taggings, :tags).order(sort)
     if params[:search].present?
       locations = locations
                   .where('name like ?', "%#{params[:search]}%")
@@ -37,8 +37,11 @@ class LocationsController < ByWorldController
   end
 
   def location_params
-    params.require(:location)
-          .permit(:id, :description, :ends, :name, :starts)
+    location_params = params.require(:location)
+                            .permit(:id, :description, :ends, :name, :starts,
+                                    taggings: [:id, :_destroy,
+                                               tag: %i[id name slug]])
+    format_tag_params!(location_params)
   end
 
   def locations
@@ -55,7 +58,7 @@ class LocationsController < ByWorldController
 
   def render_for_location(success)
     if success
-      render json: location.attributes.to_camelback_keys
+      render json: location.to_full_h.to_camelback_keys
     else
       render json: { error: location.errors.full_messages.join('; ') },
              status: :bad_request

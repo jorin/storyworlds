@@ -51,4 +51,21 @@ RSpec.describe Character, type: :model do
       end
     end
   end
+
+  describe '#to_full_h' do
+    let(:world) { create :world }
+    let(:tags) { create_list :tag, 2, world: world }
+    let(:character) { create :character, tags: tags, world: world }
+    subject { character.to_full_h }
+
+    it do
+      is_expected
+        .to eq character.attributes
+                        .merge(taggings: character.taggings
+                                                  .map do |t|
+                                           t.attributes
+                                            .merge(tag: t.tag.attributes)
+                                         end)
+    end
+  end
 end
