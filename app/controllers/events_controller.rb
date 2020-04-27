@@ -34,7 +34,7 @@ class EventsController < ByWorldController
   end
 
   def events
-    @events ||= in_timeline(filtered_events)
+    @events ||= filter(filtered_events)
   end
 
   def events_for_character(events, character_id)

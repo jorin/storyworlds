@@ -18,6 +18,10 @@ class ByWorldController < ApplicationController
     base_params[:taggings_attributes] = taggings
   end
 
+  def filter(collection)
+    with_tags(in_timeline(collection))
+  end
+
   def format_tag_params!(base_params)
     if base_params[:taggings].present?
       create_associate_tags!(base_params,
@@ -82,6 +86,13 @@ class ByWorldController < ApplicationController
     else
       [sort_by, :starts, :ends]
     end
+  end
+
+  def with_tags(collection)
+    return collection if params[:filter_tags].blank?
+
+    collection.joins(:taggings)
+              .where(taggings: { tag_id: params[:filter_tags] })
   end
 
   def world

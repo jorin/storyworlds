@@ -45,7 +45,7 @@ class LocationsController < ByWorldController
   end
 
   def locations
-    @locations ||= in_timeline(filtered_locations)
+    @locations ||= filter(filtered_locations)
   end
 
   def permit_location_update

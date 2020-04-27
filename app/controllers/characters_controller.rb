@@ -36,7 +36,7 @@ class CharactersController < ByWorldController
   end
 
   def characters
-    @characters ||= in_timeline(filtered_characters).includes(:taggings, :tags)
+    @characters ||= filter(filtered_characters).includes(:taggings, :tags)
   end
 
   # filter to characters available within starts/ends params

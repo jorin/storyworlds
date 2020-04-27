@@ -77,6 +77,29 @@ RSpec.shared_examples 'read world items' do
     end
   end
 
+  context 'when filtering to tags' do
+    let!(:item1) { create item_type, world: world }
+    let!(:item2) { create item_type, world: world }
+    let(:tag) do
+      tag = create :tag, world: world
+      item2.tags << tag
+      tag
+    end
+    before do
+      login(world.creator)
+      get :index, format: :json,
+                  params: { world_slug: world.slug,
+                            filter_tags: [tag.id] }
+    end
+    subject { JSON.parse(response.body)[collection] }
+
+    context 'when filtering after, overlapping' do
+      it do
+        is_expected.to contain_exactly(hash_including('id' => item2.id))
+      end
+    end
+  end
+
   context 'when filtering to timeline' do
     let!(:item1) { create item_type, world: world, starts: -100, ends: 200 }
     let!(:item2) { create item_type, world: world, starts: 100, ends: 200 }
