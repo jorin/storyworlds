@@ -89,10 +89,9 @@ class ByWorldController < ApplicationController
   end
 
   def with_tags(collection)
-    return collection if params[:filter_tags].blank?
-
-    collection.joins(:taggings)
-              .where(taggings: { tag_id: params[:filter_tags] })
+    FilterByTags.filter_by_params(collection,
+                                  controller_name.singularize.titleize,
+                                  params)
   end
 
   def world

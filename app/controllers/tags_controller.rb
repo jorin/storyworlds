@@ -10,13 +10,17 @@ class TagsController < ByWorldController
   private
 
   def matched_tags
-    return world.tags if search.blank?
-
-    world.tags.where('name like ?', "%#{search}%")
-         .or(world.tags.where('slug like ?', "%#{search}%"))
+    searched_tags(world.tags).where(params.permit(id: []))
   end
 
   def search
     params[:search]
+  end
+
+  def searched_tags(tags)
+    return tags if search.blank?
+
+    tags.where('name like ?', "%#{search}%")
+        .or(tags.where('slug like ?', "%#{search}%"))
   end
 end

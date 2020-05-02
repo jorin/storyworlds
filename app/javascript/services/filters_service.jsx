@@ -20,6 +20,11 @@ const FiltersService = {
   },
   hasFilters: filters => {
     const relevantFilters = Object.assign({}, filters);
+    // kill empty arrays
+    ['tagsExclude', 'tagsInclude'].forEach(k => (!relevantFilters[k] ||
+                                                 !relevantFilters[k].length) &&
+                                                delete relevantFilters[k]);
+    delete relevantFilters.tagsAnd;
     delete relevantFilters.within;
     return !!Object.keys(relevantFilters).length;
   },

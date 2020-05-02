@@ -88,14 +88,50 @@ RSpec.shared_examples 'read world items' do
     before do
       login(world.creator)
       get :index, format: :json,
-                  params: { world_slug: world.slug,
-                            filter_tags: [tag.id] }
+                  params: params
     end
     subject { JSON.parse(response.body)[collection] }
 
-    context 'when filtering after, overlapping' do
+    context 'when filtering to exclude tags' do
+      let(:params) do
+        { world_slug: world.slug,
+          filter_tags_exclude: [tag.id] }
+      end
+
       it do
-        is_expected.to contain_exactly(hash_including('id' => item2.id))
+        is_expected.to contain_exactly(hash_including('id' => item1.id))
+      end
+    end
+
+    context 'when filtering to include tags' do
+      let!(:item3) { create item_type, world: world }
+      let!(:tag2) do
+        tag = create :tag, world: world
+        item1.tags << tag
+        item2.tags << tag
+        tag
+      end
+      let(:params) do
+        { world_slug: world.slug,
+          filter_tags_include: [tag.id, tag2.id] }
+      end
+
+      it do
+        is_expected.to contain_exactly(hash_including('id' => item1.id),
+                                       hash_including('id' => item2.id))
+      end
+
+      context 'when filtering to include tags requiring all' do
+        let(:params) do
+          { world_slug: world.slug,
+            filter_tags_and: 'true',
+            filter_tags_include: [tag.id, tag2.id] }
+        end
+
+        it do
+          is_expected
+            .to contain_exactly(hash_including('id' => item2.id))
+        end
       end
     end
   end

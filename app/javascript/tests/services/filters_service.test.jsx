@@ -25,7 +25,10 @@ describe('equal', () => {
 describe('hasFilters', () => {
   test('falsy filters is false', () => expect(FiltersService.hasFilters(null)).toBe(false));
   test('empty filters is false', () => expect(FiltersService.hasFilters({})).toBe(false));
-  test('inapplicable filters is false', () => expect(FiltersService.hasFilters({ within: true })).toBe(false));
+  test('empty tagsInclude filter is false', () => expect(FiltersService.hasFilters({ tagsInclude: [] })).toBe(false));
+  test('empty tagsExclude filter is false', () => expect(FiltersService.hasFilters({ tagsExclude: undefined })).toBe(false));
+  test('inapplicable tagsAnd filter is false', () => expect(FiltersService.hasFilters({ tagsAnd: true })).toBe(false));
+  test('inapplicable within filter is false', () => expect(FiltersService.hasFilters({ within: true })).toBe(false));
   test('applicable filters is true', () => expect(FiltersService.hasFilters({ starts: 100, within: true })).toBe(true));
 });
 

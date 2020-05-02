@@ -22,5 +22,22 @@ RSpec.describe TagsController, type: :controller do
                               hash_including('id' => tag3.id))
       end
     end
+
+    context 'when searching by ids' do
+      let!(:tag1) { create :tag }
+      let!(:tag2) { create :tag, world: world }
+      let!(:tag3) { create :tag, world: world }
+      let(:world) { tag1.world }
+      before do
+        login(world.creator)
+        get :index, params: { id: [tag1.id, tag3.id], world_slug: world.slug }
+      end
+
+      it do
+        expect(JSON.parse(response.body)['tags'])
+          .to contain_exactly(hash_including('id' => tag1.id),
+                              hash_including('id' => tag3.id))
+      end
+    end
   end
 end

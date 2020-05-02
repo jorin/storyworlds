@@ -142,6 +142,7 @@ export default class Detail extends React.Component {
         </div>
         <FiltersPanel filters={filters}
                       handleFiltersChange={filters => this.setState({ filters })}
+                      tagsPath={tagsPath}
                       timelineUnits={timelineUnits} />
       </div>
     );
