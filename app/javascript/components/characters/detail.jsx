@@ -66,17 +66,22 @@ export default class Detail extends React.Component {
     const { permissions: { manage }, tagsPath, userId } = this.props;
     const { character, character: { creatorId, taggings } } = this.state;
 
-    return manage || creatorId === userId ? <TagsEditor handleUpdateTaggings={taggings => this.setState(({ character }) => ({ character: Object.assign({},
-                                                                                                                                                       character,
-                                                                                                                                                       { taggings }) }), this.handleSave)}
-                                                        taggings={taggings || []}
-                                                        tagsPath={tagsPath} />
-                                          : <div className= 'my-3'>
-                                              { taggings &&
-                                                !!taggings.length &&
-                                                taggings.map(({ tag: { name, slug } }) => <span key={slug}
-                                                                                                className='badge badge-secondary badge-pill font-weight-light mb-2 mr-2'>{name}</span>) }
-                                            </div>;
+    return (
+      <React.Fragment>
+        <h2 className='h5 font-weight-light text-muted'>tags</h2>
+        { manage || creatorId === userId ? <TagsEditor handleUpdateTaggings={taggings => this.setState(({ character }) => ({ character: Object.assign({},
+                                                                                                                                                      character,
+                                                                                                                                                      { taggings }) }), this.handleSave)}
+                                                       taggings={taggings || []}
+                                                       tagsPath={tagsPath} />
+                                         : <div className= 'my-3'>
+                                             { taggings &&
+                                               !!taggings.length ? taggings.map(({ tag: { name, slug } }) => <span key={slug}
+                                                                                                                   className='badge badge-secondary badge-pill font-weight-light mb-2 mr-2'>{name}</span>)
+                                                                 : <span className='font-italic font-weight-light small'>no tags</span> }
+                                           </div> }
+      </React.Fragment>
+    );
   };
 
   render() {
@@ -90,6 +95,7 @@ export default class Detail extends React.Component {
         <hr />
         <div className='character-content'>
           <div id='events'>
+            <h2 className='h5 font-weight-light mb-n1 text-muted'>events</h2>
             <Events character={character}
                     charactersPath={charactersPath}
                     eventsPath={eventsPath}

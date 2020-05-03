@@ -1,5 +1,14 @@
 import FormatService from 'services/format_service';
 
+describe('flatAncestryToTree', () => {
+  const flat = [{ id: 1 }, { id: 4, ancestry: '1/2' }, { id: 2, ancestry: '1' }, { id: 3, ancestry: '1' }, { id: 5, ancestry: '1/2/4' }];
+  const flat2 = [{ id: 3, ancestry: '1/2' }, { id: 4, ancestry: '1/2' }, { id: 5, ancestry: '1/2/4' }];
+  const tree = [{ id: 1, children: [{ id: 2, ancestry: '1', children: [{ id: 4, ancestry: '1/2', children: [{ id: 5, ancestry: '1/2/4', children: [] }] }] }, { id: 3, ancestry: '1', children: [] }] }];
+  const subtree = [{ id: 3, ancestry:'1/2', children: [] }, { id: 4, ancestry: '1/2', children: [{ id: 5, ancestry: '1/2/4', children:[] }] }];
+  test('converts flat array with ancestry to tree', () => expect(FormatService.flatAncestryToTree(flat)).toEqual(tree));
+  test('converts flat array with ancestry to subtree', () => expect(FormatService.flatAncestryToTree(flat2, 2)).toEqual(subtree));
+});
+
 describe('slugify', () => {
   test('exits if not string', () => expect(FormatService.slugify(null)).toBeFalsy());
   test('doesn\'t transform existing slug', () => expect(FormatService.slugify('a-slug')).toBe('a-slug'));

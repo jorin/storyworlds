@@ -20,7 +20,10 @@ RSpec.describe Location, type: :model do
     it do
       is_expected
         .to eq location.attributes
-                       .merge(taggings: location.taggings
+                       .merge(ancestors: [],
+                              contains: [],
+                              parent: nil,
+                              taggings: location.taggings
                                                 .map do |t|
                                           t.attributes
                                            .merge(tag: t.tag.attributes)

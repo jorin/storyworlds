@@ -4,6 +4,27 @@ import { STANDARD_TIMELINE_DISPLAY_FORMAT, STANDARD_TIMELINE_PARSE_FORMAT } from
 const MINUTES_PER_DAY = 24 * 60;
 
 const FormatService = {
+  flatAncestryToTree: (flat, startsAtId) => flat.reduce((tree, item) => {
+    let ancestryIds = item.ancestry ? item.ancestry.split('/').map(id => parseInt(id, 10)) : '';
+    let currentTree = tree;
+    if (startsAtId) { ancestryIds = ancestryIds.slice(ancestryIds.indexOf(startsAtId) + 1); }
+
+    ancestryIds.length && ancestryIds.forEach(id => {
+      let nextTree = currentTree.find(i => i.id === id);
+      if (!nextTree) {
+        nextTree = { id, children: [] };
+        currentTree.push(nextTree);
+      }
+      currentTree = nextTree.children;
+    });
+
+    const nodeIndex = currentTree.findIndex(({ id }) => item.id === id);
+    if (nodeIndex === -1) { currentTree.push(Object.assign({ children: [] }, item)); }
+    else { currentTree[nodeIndex] = Object.assign({ children: [] }, item, currentTree[nodeIndex]); }
+
+    return tree;
+  }, []),
+
   slugify: str => {
     if (!str) { return; }
 

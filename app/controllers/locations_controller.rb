@@ -38,7 +38,8 @@ class LocationsController < ByWorldController
 
   def location_params
     location_params = params.require(:location)
-                            .permit(:id, :description, :ends, :name, :starts,
+                            .permit(:id, :description, :ends, :name,
+                                    :parent_id, :starts,
                                     taggings: [:id, :_destroy,
                                                tag: %i[id name slug]])
     format_tag_params!(location_params)

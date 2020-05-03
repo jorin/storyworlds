@@ -14,17 +14,26 @@ class Location < ApplicationRecord
   validates_presence_of :world
   validate :validate_starts_ends
 
+  has_ancestry
   html_fragment :description, scrub: :strip
 
   def to_full_h
+    contained_by = ancestors.select(:id, :name)
     attributes
-      .merge(taggings: taggings.map do |tagging|
-                         tagging.attributes
-                                .merge(tag: tagging.tag.attributes)
-                       end)
+      .merge(ancestors: contained_by,
+             contains: descendants.select(:id, :ancestry, :name),
+             parent: contained_by.last,
+             taggings: taggings_attributes)
   end
 
   private
+
+  def taggings_attributes
+    taggings.map do |tagging|
+      tagging.attributes
+             .merge(tag: tagging.tag.attributes)
+    end
+  end
 
   def validate_starts_ends
     return unless starts.present? && ends.present? && starts > ends

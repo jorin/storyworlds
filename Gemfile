@@ -15,6 +15,9 @@ gem 'plissken'
 # html sanitization
 gem 'loofah-activerecord'
 
+# ancestry tree relations
+gem 'ancestry'
+
 gem 'rails'
 # Use mysql2 as the database for Active Record
 gem 'mysql2', '>= 0.4.4'

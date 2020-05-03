@@ -173,7 +173,7 @@ export default class Items extends React.Component {
           <a href={`${itemsPath}/${id}`}
              className='float-right small btn btn-info more-info'
              onClick={e => e.stopPropagation()}>View ↗</a>
-          <p className='lead'>{name}</p>
+          <p><span className='lead'>{name}</span>{this.renderItemColAncestry(item)}</p>
           <div className='more-info'
                dangerouslySetInnerHTML={{ __html: description }} />
           <TimelineLabel starts={starts}
@@ -187,6 +187,23 @@ export default class Items extends React.Component {
           </div>
         </div>
       </div>
+    );
+  };
+
+  renderItemColAncestry = item => {
+    const { itemsPath } = this.props;
+    const { contains, parent } = item;
+    const linkTo = ({ id, name }) => <a key={`${id}-${name}`}
+                                        href={`${itemsPath}/${id}`}
+                                        onClick={e => e.stopPropagation()}>{name}</a>;
+
+    return (
+      <React.Fragment>
+        { parent && <span className='d-block small text-muted'>In: {linkTo(parent)}</span> }
+        { contains && !!contains.length && <span className='d-block small item-contains text-muted'>
+                                             Contains: {contains.map(linkTo)}
+                                           </span> }
+      </React.Fragment>
     );
   };
 

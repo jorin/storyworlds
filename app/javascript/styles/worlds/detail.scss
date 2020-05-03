@@ -133,3 +133,28 @@ a.sort-toggler {
     &.right:before { right: 0; }
   }
 }
+
+.item-contains a:after {
+  color: $text-muted;
+  content: ', ';
+  display: inline;
+  text-decoration: none;
+}
+.item-contains a:last-child:after { content: ''; }
+
+ul.list-hierarchical {
+  list-style-type: none;
+  margin: 0 0 0 0.5rem;
+  padding: 0;
+  li {
+    &:before {
+      content: '└';
+      display: inline;
+      float: left;
+    }
+    & > * {
+      display: block;
+      margin-left: 1.375rem;
+    }
+  }
+}
