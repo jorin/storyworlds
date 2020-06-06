@@ -60,6 +60,30 @@ export default class Detail extends React.Component {
 
   isEditable = () => this.props.permissions.manage || this.state.location.creatorId === this.props.userId;
 
+  renderCoordinates() {
+    const { location, location: { coordinateX, coordinateY } } = this.state;
+    const canEdit = this.isEditable();
+    const renderInput = (key, placeholder) => <input className='form-control'
+                                                     onBlur={e => this.handleSave({ fields: key })}
+                                                     onChange={({ target: { value } }) => this.setState(({ location }) => ({ location: Object.assign({}, location, { [key]: value }) }))}
+                                                     placeholder={placeholder}
+                                                     value={location[key] || ''} />;
+
+    return (canEdit || (typeof coordinateX === 'number' &&
+                        typeof coordinateY === 'number')) && (
+      <div className='row mb-3'>
+        <div className='col-md-1 text-md-right my-auto'>At</div>
+        <div className='col-md-4 my-auto'>
+          { canEdit ? <div className='row'>
+                        <div className='col-md-6'>{renderInput('coordinateX', 'x coordinate')}</div>
+                        <div className='col-md-6'>{renderInput('coordinateY', 'y coordinate')}</div>
+                      </div>
+                    : <div>{coordinateX}, {coordinateY}</div> }
+        </div>
+      </div>
+    );
+  };
+
   renderDescription() {
     const { FIELD_DESCRIPTION } = this.constructor;
     const { descriptionEdit, editing, location: { description } } = this.state;
@@ -198,9 +222,10 @@ export default class Detail extends React.Component {
     return (
       <div className='container'>
         {this.renderDescription()}
-    {this.renderHierarchy()}
-    {this.renderTags()}
-    <hr />
+        {this.renderCoordinates()}
+        {this.renderHierarchy()}
+        {this.renderTags()}
+        <hr />
         <div className='location-content'>
           <div id='events'>
             <h2 className='h5 font-weight-light mb-n1 text-muted'>events</h2>

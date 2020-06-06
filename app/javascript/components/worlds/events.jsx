@@ -135,14 +135,21 @@ export default class Events extends React.Component {
 
     return location ? (
       <div className='form-group'>
-        <div className='row'>
-          <div className='col-md-6'>
+        <div className='row mb-3'>
+          <div className='col-md-11'>
             <input type='TEXT'
                    className='form-control'
                    onChange={({ target: { value } }) => handleUpdate('name', value)}
                    placeholder='location name'
                    value={location.name || ''} />
           </div>
+          <div className='col-md-1'>
+            <a href='#'
+               className='btn btn-block btn-secondary'
+               onClick={e => { e.preventDefault(); this.setState({ location: null }); }}>×</a>
+          </div>
+        </div>
+        <div className='row'>
           <div className='col-md-2'>
             <TimelineInput onChange={starts => handleUpdate('starts', starts)}
                            placeholder='location starts'
@@ -158,11 +165,20 @@ export default class Events extends React.Component {
                            timelineUnits={timelineUnits}
                            value={location.ends} />
           </div>
-          <div className='col-md-1'>
-            <a href='#'
-               className='btn btn-block btn-secondary'
-               onClick={e => { e.preventDefault(); this.setState({ location: null }); }}>×</a>
-            </div>
+          <div className='col-md-3'>
+            <input type='TEXT'
+                   className='form-control'
+                   onChange={({ target: { value } }) => handleUpdate('coordinateX', value)}
+                   placeholder='x coordinate'
+                   value={location.coordinateX || ''} />
+          </div>
+          <div className='col-md-3'>
+            <input type='TEXT'
+                   className='form-control'
+                   onChange={({ target: { value } }) => handleUpdate('coordinateY', value)}
+                   placeholder='y coordinate'
+                   value={location.coordinateY || ''} />
+          </div>
         </div>
       </div>
     ) : (

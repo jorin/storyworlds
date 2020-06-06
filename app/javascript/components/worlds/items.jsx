@@ -97,10 +97,36 @@ export default class Items extends React.Component {
       .always(() => this.setState({ loading: false }));
   };
 
+  renderLocationFields = ({ coordinateX, coordinateY }, handleUpdate) => (
+    <React.Fragment>
+      <div className='row'>
+        <div className='col-sm-6'>
+          <div className='form-group'>
+            <input type='TEXT'
+                   className='form-control'
+                   onChange={({ target: { value } }) => handleUpdate('coordinateX', value)}
+                   placeholder='x coordinate'
+                   value={coordinateX || ''} />
+          </div>
+        </div>
+        <div className='col-sm-6'>
+          <div className='form-group'>
+            <input type='TEXT'
+                   className='form-control'
+                   onChange={({ target: { value } }) => handleUpdate('coordinateY', value)}
+                   placeholder='y coordinate'
+                   value={coordinateY || ''} />
+          </div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+
   renderForm = () => {
     const { itemKey, itemLabel, tagsPath, timelineUnits } = this.props;
     const { error, [itemKey]: { description, ends, id, name, starts, taggings } } = this.state;
     const handleUpdate = (field, value) => this.setState(prevState => ({ [itemKey]: Object.assign({}, prevState[itemKey], { [field]: value }) }));
+    const itemTypeFieldsRenderer = this[`render${itemKey.replace(/^./, itemKey[0].toUpperCase())}Fields`];
 
     return (
       <div>
@@ -144,6 +170,7 @@ export default class Items extends React.Component {
             </div>
           </div>
         </div>
+        {itemTypeFieldsRenderer && itemTypeFieldsRenderer(this.state[itemKey], handleUpdate)}
         <div className='form-group'>
           <TagsEditor handleUpdateTaggings={taggings => handleUpdate('taggings', taggings)}
                       stacked
