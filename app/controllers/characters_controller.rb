@@ -36,7 +36,8 @@ class CharactersController < ByWorldController
   end
 
   def characters
-    @characters ||= filter(filtered_characters).includes(:taggings, :tags)
+    @characters ||=
+      filter(filtered_characters).includes(:taggings, :tags).distinct
   end
 
   # filter to characters available within starts/ends params
