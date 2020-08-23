@@ -10,6 +10,7 @@ import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
 import 'styles/ui/html_area';
+import 'styles/ui/map';
 import 'styles/ui/timeline';
 
 export default class Items extends React.Component {
@@ -200,7 +201,11 @@ export default class Items extends React.Component {
           <a href={`${itemsPath}/${id}`}
              className='float-right small btn btn-info more-info'
              onClick={e => e.stopPropagation()}>View ↗</a>
-          <p><span className='lead'>{name}</span>{this.renderItemColAncestry(item)}</p>
+          <p>
+            <span className='lead'>{name}</span>
+            {this.renderItemIcons(item)}
+            {this.renderItemColAncestry(item)}
+          </p>
           <div className='more-info'
                dangerouslySetInnerHTML={{ __html: description }} />
           <TimelineLabel starts={starts}
@@ -234,15 +239,25 @@ export default class Items extends React.Component {
     );
   };
 
+  renderItemIcons = ({ coordinateX, coordinateY }) => {
+    const icons = [];
+
+    if (typeof coordinateX === 'number' && typeof coordinateY === 'number') { icons.push(<i className='is-mapped' key='is-mapped' />); }
+
+    return icons.length ? <span className='item-icons d-block'>{icons}</span> : null;
+  };
+
   renderModes() {
     const { MODE_LIST, MODE_TIMELINE } = this.constructor;
+    const { modes } = this.props;
     const { mode } = this.state;
     const renderLink = m => <a href='#'
                                className={mode === m ? 'active' : ''}
                                onClick={e => { e.preventDefault();
                                                this.setState({ mode: m }); }}>{m}</a>;
 
-    return <p className='view-mode'>{renderLink(MODE_LIST)} | {renderLink(MODE_TIMELINE)}</p>;
+    return <p className='view-mode'>{[MODE_LIST, MODE_TIMELINE].concat(Object.keys(modes)).sort()
+                                                               .map(m => <React.Fragment key={m}>{renderLink(m)} <span className='delimiter'>|</span> </React.Fragment>)}</p>;
   };
 
   renderSorts() {
@@ -307,8 +322,8 @@ export default class Items extends React.Component {
   };
 
   render() {
-    const { MODE_LIST } = this.constructor;
-    const { itemKey, itemLabel, itemsKey, permissions: { write } } = this.props;
+    const { MODE_LIST, MODE_TIMELINE } = this.constructor;
+    const { itemKey, itemLabel, itemsKey, modes, permissions: { write } } = this.props;
     const { loading, mode, perPage, total } = this.state;
     const item = this.state[itemKey];
     const items = this.state[itemsKey];
@@ -320,8 +335,8 @@ export default class Items extends React.Component {
         <div className='row'>
           <div className='col'>
             <div className='row'>
-              { mode === MODE_LIST ? (items || []).map(this.renderItemCol)
-                                   : this.renderTimeline() }
+              { Object.assign({ [MODE_LIST]: () => (items || []).map(this.renderItemCol),
+                                [MODE_TIMELINE]: this.renderTimeline.bind(this) }, modes)[mode]({ [itemsKey]: items, className: 'col-md-8' }) }
               { items.length < total && (
                   <div className='col-md-4 col-sm-6 mb-5'>
                     <Paginator className='in-item-grid mt-n2 mt-sm-3'
@@ -352,12 +367,17 @@ export default class Items extends React.Component {
   };
 };
 
+Items.defaultProps = {
+  modes: {},
+};
+
 Items.propTypes = {
   filters: PropTypes.object,
   itemKey: PropTypes.string.isRequired,
   itemLabel: PropTypes.string.isRequired,
   itemsKey: PropTypes.string.isRequired,
   itemsPath: PropTypes.string.isRequired,
+  modes: PropTypes.object,
   permissions: PropTypes.object.isRequired,
   reload: PropTypes.bool,
   tagsPath: PropTypes.string.isRequired,

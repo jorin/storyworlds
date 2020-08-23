@@ -1,4 +1,4 @@
-import Paginator from 'components/ui/paginator'
+import Paginator from 'components/ui/paginator';
 import React from 'react';
 import { shallow } from 'enzyme';
 

@@ -1,0 +1,53 @@
+@import "../partials/bootstrap";
+@import "../partials/colors";
+
+.map {
+  background: $dark-cerulean;
+  border: 1px solid $sky;
+  cursor: grab;
+  &.grabbed { cursor: grabbing; }
+}
+
+.map-controls {
+  background: rgba($dark-cerulean, 0.5);
+  left: 0;
+  top: 0;
+}
+
+.map-zoom-in, .map-zoom-out {
+  background: $white;
+  display: inline-block;
+  margin: 1rem;
+  height: 1rem;
+  width: 1rem;
+  &:last-child { margin-left: 0; }
+}
+.map-zoom-in { mask: url(~bootstrap-icons/icons/zoom-in.svg) center/cover no-repeat; }
+.map-zoom-out { mask: url(~bootstrap-icons/icons/zoom-out.svg) center/cover no-repeat; }
+
+.map-point {
+  color: $white;
+  text-shadow: 0.125rem 0.125rem 0.125rem $black;
+
+  .map-name {
+    margin: -1rem 0 0 0;
+  }
+
+  &.map-pin:before {
+    content: '⌂';
+    display: block;
+    font-size: 2rem;
+    line-height: 0;
+    margin: 0 0 0 -0.5rem;
+    position: absolute;
+  }
+}
+
+.map-legend {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    & ul { margin-left: 1rem; }
+  }
+}

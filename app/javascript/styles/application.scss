@@ -120,6 +120,7 @@ label.required:after {
       pointer-events: none;
     }
   }
+  .delimiter:last-child { display: none; }
 }
 
 .public-DraftStyleDefault-block { margin-bottom: 16px; }

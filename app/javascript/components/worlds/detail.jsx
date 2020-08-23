@@ -6,6 +6,7 @@ import FiltersPanel from 'components/ui/filters_panel';
 import FiltersService from 'services/filters_service';
 import HtmlArea from 'components/ui/html_area';
 import Items from './items';
+import Map from 'components/ui/map';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
 
@@ -127,6 +128,7 @@ export default class Detail extends React.Component {
           <div id='locations'>
             <h2>{SECTION_LOCATIONS}</h2>
             <Items filters={filters}
+                   modes={{ map: props => <Map {...props} /> }}
                    permissions={permissions}
                    reload={reload}
                    tagsPath={tagsPath}
