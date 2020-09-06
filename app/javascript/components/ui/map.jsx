@@ -40,13 +40,13 @@ export default class Map extends React.Component {
     const bounds = this.mappableLocations().reduce((bounds, { coordinateX, coordinateY }) => {
       const { e, n, s, w } = bounds;
 
-      (!e || coordinateX > e) && Object.assign(bounds, { e: coordinateX });
-      (!n || coordinateY > n) && Object.assign(bounds, { n: coordinateY });
-      (!s || coordinateY < s) && Object.assign(bounds, { s: coordinateY });
-      (!w || coordinateX < w) && Object.assign(bounds, { w: coordinateX });
+      (typeof e !== 'number' || coordinateX > e) && Object.assign(bounds, { e: coordinateX });
+      (typeof n !== 'number' || coordinateY > n) && Object.assign(bounds, { n: coordinateY });
+      (typeof s !== 'number' || coordinateY < s) && Object.assign(bounds, { s: coordinateY });
+      (typeof w !== 'number' || coordinateX < w) && Object.assign(bounds, { w: coordinateX });
 
       return bounds;
-    }, { e: 0, n: 0, s: 0, w: 0 });
+    }, {});
     const buffer = parseFloat(`1e${Math.max(...Object.values(bounds).map(b => Math.ceil(Math.abs(b)))).toString().length - 3}`);
     bounds.e += buffer*1.33;
     bounds.n += buffer;

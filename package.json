@@ -49,7 +49,7 @@
     ],
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1",
-      "^styles\/(.*)": "identity-obj-proxy",
+      "^styles/(.*)": "identity-obj-proxy",
       "\\.(css|scss)$": "identity-obj-proxy"
     },
     "setupFilesAfterEnv": [
