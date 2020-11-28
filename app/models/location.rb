@@ -4,6 +4,8 @@ class Location < ApplicationRecord
   belongs_to :creator, class_name: :User
   belongs_to :world, inverse_of: :locations
   has_many :events, dependent: :destroy, inverse_of: :location
+  has_many :relations, as: :relatable, dependent: :destroy,
+                       class_name: :Relationship
   has_many :taggings, as: :tagged, dependent: :destroy
   has_many :tags, through: :taggings
 

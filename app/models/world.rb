@@ -5,6 +5,7 @@ class World < ApplicationRecord
   has_many :characters, dependent: :destroy, inverse_of: :world
   has_many :events, dependent: :destroy, inverse_of: :world
   has_many :locations, dependent: :destroy, inverse_of: :world
+  has_many :relationships, dependent: :destroy, inverse_of: :world
   has_many :tags, dependent: :destroy, inverse_of: :world
   has_many :world_permissions, dependent: :destroy, inverse_of: :world
 

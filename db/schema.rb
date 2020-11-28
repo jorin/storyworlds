@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_06_202333) do
+ActiveRecord::Schema.define(version: 2020_11_28_194453) do
 
   create_table "characters", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
@@ -64,6 +64,25 @@ ActiveRecord::Schema.define(version: 2020_06_06_202333) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["character_id"], name: "index_participants_on_character_id"
     t.index ["event_id"], name: "index_participants_on_event_id"
+  end
+
+  create_table "relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "inverse_name"
+    t.text "description"
+    t.bigint "character_id", null: false
+    t.string "relatable_type", null: false
+    t.bigint "relatable_id", null: false
+    t.bigint "creator_id"
+    t.bigint "world_id", null: false
+    t.bigint "starts"
+    t.bigint "ends"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["character_id"], name: "index_relationships_on_character_id"
+    t.index ["creator_id"], name: "index_relationships_on_creator_id"
+    t.index ["relatable_type", "relatable_id"], name: "index_relationships_on_relatable_type_and_relatable_id"
+    t.index ["world_id"], name: "index_relationships_on_world_id"
   end
 
   create_table "taggings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -121,6 +140,9 @@ ActiveRecord::Schema.define(version: 2020_06_06_202333) do
   add_foreign_key "events", "worlds"
   add_foreign_key "locations", "users", column: "creator_id"
   add_foreign_key "locations", "worlds"
+  add_foreign_key "relationships", "characters"
+  add_foreign_key "relationships", "users", column: "creator_id"
+  add_foreign_key "relationships", "worlds"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "worlds"
   add_foreign_key "world_permissions", "users"
