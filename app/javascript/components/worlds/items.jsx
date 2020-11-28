@@ -10,7 +10,6 @@ import Timeline from 'components/ui/timeline';
 import TimelineInput from 'components/ui/timeline_input';
 import TimelineLabel from 'components/ui/timeline_label';
 import 'styles/ui/html_area';
-import 'styles/ui/map';
 import 'styles/ui/timeline';
 
 export default class Items extends React.Component {

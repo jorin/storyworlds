@@ -5,6 +5,7 @@ import HtmlArea from 'components/ui/html_area';
 import TagsEditor from 'components/ui/tags_editor';
 import Events from 'components/worlds/events';
 import FormatService from 'services/format_service';
+import Map, { mappableLocations } from 'components/ui/map';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
 
@@ -193,6 +194,17 @@ export default class Detail extends React.Component {
     );
   };
 
+  renderMap() {
+    const { location: { contains, name } } = this.state;
+
+    return !!mappableLocations(contains).length && (
+      <div className='my-3'>
+        <h2 className='h5 font-weight-light text-muted' id='map'>map</h2>
+        <Map locations={contains} />
+      </div>
+    );
+  };
+
   renderTags() {
     const { tagsPath } = this.props;
     const { location, location: { taggings } } = this.state;
@@ -239,6 +251,7 @@ export default class Detail extends React.Component {
                     userId={userId} />
           </div>
         </div>
+        {this.renderMap()}
       </div>
     );
   };

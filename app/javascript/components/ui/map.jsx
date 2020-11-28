@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import MapPoint from './map_point';
+import 'styles/ui/map';
+
+export const mappableLocations = locations => locations.filter(({ coordinateX, coordinateY }) => typeof coordinateX === 'number' && typeof coordinateY === 'number');
 
 export default class Map extends React.Component {
   constructor(props) {
@@ -37,7 +40,7 @@ export default class Map extends React.Component {
 
   // find the bounds of the map according to the mapped items, and slightly extend edges
   initialBounds = () => {
-    const bounds = this.mappableLocations().reduce((bounds, { coordinateX, coordinateY }) => {
+    const bounds = mappableLocations(this.props.locations).reduce((bounds, { coordinateX, coordinateY }) => {
       const { e, n, s, w } = bounds;
 
       (typeof e !== 'number' || coordinateX > e) && Object.assign(bounds, { e: coordinateX });
@@ -55,8 +58,6 @@ export default class Map extends React.Component {
 
     return bounds;
   };
-
-  mappableLocations = () => this.props.locations.filter(({ coordinateX, coordinateY }) => typeof coordinateX === 'number' && typeof coordinateY === 'number');
 
   moveBounds = () => this.setState(({ bounds: { e, n, s, w }, target: { x, y } }) => {
     const centerX = (w + e)/2, centerY = (n + s)/2;
@@ -87,19 +88,19 @@ export default class Map extends React.Component {
 
   // recursively render hierarchy of locations currently loaded
   renderMapLegend() {
-    const mappableLocations = this.mappableLocations();
+    const locations = mappableLocations(this.props.locations);
 
     // build list of locations under a parent id,
     // or to a top level list (parentId === null) if the parent is not loaded or mapped
     const renderLocationList = parentId => (
       <ul key={`location-list-${parentId}`}>
-        { mappableLocations.filter(({ parent }) => ((parent && parent.id) === parentId) ||
-                                                   (!parentId && !mappableLocations.some(({ id }) => id === (parent && parent.id))))
-                           .map(({ coordinateX, coordinateY,
-                                   id, name }) => <li className={`legend-location-${id}`} key={`location-${id}`}>
-                                                    <a href='#' onClick={e => { e.preventDefault(); this.centerTo(coordinateX, coordinateY); }}>{name}</a>
-                                                    {renderLocationList(id)}
-                                                  </li>) }
+        { locations.filter(({ parent }) => ((parent && parent.id) === parentId) ||
+                                            (!parentId && !locations.some(({ id }) => id === (parent && parent.id))))
+                   .map(({ coordinateX, coordinateY,
+                           id, name }) => <li className={`legend-location-${id}`} key={`location-${id}`}>
+                                            <a href='#' onClick={e => { e.preventDefault(); this.centerTo(coordinateX, coordinateY); }}>{name}</a>
+                                            {renderLocationList(id)}
+                                          </li>) }
       </ul>
     );
 
@@ -109,11 +110,11 @@ export default class Map extends React.Component {
   render() {
     const { className, locations } = this.props;
     const { bounds: { e, n, s, w }, grabAnchor } = this.state;
-    const mappableLocations = this.mappableLocations();
+    const mapLocations = mappableLocations(locations);
 
     // calculate map data for each mappable location
-    const numberMapped = locations => (locations || []).filter(({ id }) => mappableLocations.findIndex(l => l.id === id) !== -1).length;
-    const mappedLocations = mappableLocations.map(({ ancestors, contains, coordinateX, coordinateY, id, name }) => ({
+    const numberMapped = locations => (locations || []).filter(({ id }) => mapLocations.findIndex(l => l.id === id) !== -1).length;
+    const mappedLocations = mapLocations.map(({ ancestors, contains, coordinateX, coordinateY, id, name }) => ({
       id,
       isArea: !!numberMapped(contains),
       name,

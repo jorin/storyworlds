@@ -18,15 +18,23 @@ class Location < ApplicationRecord
   html_fragment :description, scrub: :strip
 
   def to_full_h
-    contained_by = ancestors.select(:id, :name)
     attributes
-      .merge(ancestors: contained_by,
-             contains: descendants.select(:id, :ancestry, :name),
-             parent: contained_by.last,
+      .merge(ancestors: ancestors_attributes,
+             contains: contains_attributes,
+             parent: ancestors_attributes.last,
              taggings: taggings_attributes)
   end
 
   private
+
+  def ancestors_attributes
+    @ancestors_attributes ||= ancestors.select(:id, :name).map(&:attributes)
+  end
+
+  def contains_attributes
+    descendants.select(:id, :ancestry, :coordinate_x, :coordinate_y, :name)
+               .map(&:attributes)
+  end
 
   def taggings_attributes
     taggings.map do |tagging|
