@@ -1,20 +1,14 @@
-@import "../partials/bootstrap";
 @import "../partials/colors";
+@import "../partials/textures";
 
 #header {
+  background: $dark-cerulean;
+  @include wavy-background-image;
+  border-bottom: 1px solid $ocean;
   margin: 0 0 20px;
   h1,
   .header-user {
     margin: 15px 0;
     .dropdown:first-child { margin: 20px 0 10px; }
-  }
-  .container {
-    background: $dark-cerulean;
-    border-bottom: 1px solid $ocean;
-    box-shadow: 0 0 6px 3px rgba($black, 0.25);
-  }
-  @include media-breakpoint-up(md) {
-    margin-top: 20px;
-    .container { border-radius: 15px 15px 0 0; }
   }
 }

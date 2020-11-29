@@ -32,12 +32,11 @@ ul.sections-nav {
 }
 .subsection-controls {
   position: sticky;
-  margin: 0 -20px;
-  padding: 20px;
+  margin: 0 -15px;
+  padding: 15px;
   background: rgba($midnight, 0.75);
   border-bottom: 1px solid $black;
   top: 0;
-  width: 100%;
   z-index: 1;
 }
 .world-content .subsection-controls { top: 36px; }
