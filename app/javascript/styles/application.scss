@@ -25,6 +25,16 @@ label.required:after {
   color: $danger;
 }
 
+table.table {
+  thead th {
+    background: rgba($egyptian, 0.25);
+    border-bottom: 1px solid rgba($sky, 0.5);
+    color: $sky;
+  }
+  thead th, tbody td { border-top-color: rgba($sky, 0.5); }
+  tbody td { color: $eggshell; }
+}
+
 @keyframes loader-icon-animation {
   0% { font-size: 42px; opacity: 0.25; }
   50% { font-size: 128px; opacity: 0.5; }

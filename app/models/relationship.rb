@@ -20,6 +20,11 @@ class Relationship < ApplicationRecord
 
   html_fragment :description, scrub: :strip
 
+  def to_full_h
+    attributes.merge(character: character.attributes,
+                     relatable: relatable.attributes)
+  end
+
   private
 
   def validate_ends

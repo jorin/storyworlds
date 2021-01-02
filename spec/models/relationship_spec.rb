@@ -52,4 +52,16 @@ RSpec.describe Relationship, type: :model do
       end
     end
   end
+
+  describe '#to_full_h' do
+    let(:relationship) { create :relationship }
+    subject { relationship.to_full_h }
+
+    it do
+      is_expected
+        .to eq relationship.attributes
+                           .merge(character: relationship.character.attributes,
+                                  relatable: relationship.relatable.attributes)
+    end
+  end
 end

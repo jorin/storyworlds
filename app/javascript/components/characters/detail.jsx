@@ -3,6 +3,7 @@ import React from 'react';
 import HtmlArea from 'components/ui/html_area';
 import TagsEditor from 'components/ui/tags_editor';
 import Events from 'components/worlds/events';
+import Relationships from 'components/worlds/relationships';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
 
@@ -85,7 +86,7 @@ export default class Detail extends React.Component {
   };
 
   render() {
-    const { charactersPath, eventsPath, locationsPath, permissions, tagsPath, timelineUnits, userId } = this.props;
+    const { charactersPath, eventsPath, locationsPath, permissions, relationshipsPath, tagsPath, timelineUnits, userId } = this.props;
     const { character } = this.state;
 
     return (
@@ -105,6 +106,17 @@ export default class Detail extends React.Component {
                     timelineUnits={timelineUnits}
                     userId={userId} />
           </div>
+          <hr />
+          <div id='relationships'>
+            <h2 className='h5 font-weight-light text-muted'>relationships</h2>
+            <Relationships character={character}
+                           charactersPath={charactersPath}
+                           locationsPath={locationsPath}
+                           permissions={permissions}
+                           relationshipsPath={relationshipsPath}
+                           timelineUnits={timelineUnits}
+                           userId={userId} />
+          </div>
         </div>
       </div>
     );
@@ -117,6 +129,7 @@ Detail.propTypes = {
   eventsPath: PropTypes.string.isRequired,
   locationsPath: PropTypes.string.isRequired,
   permissions: PropTypes.object.isRequired,
+  relationshipsPath: PropTypes.string.isRequired,
   tagsPath: PropTypes.string.isRequired,
   timelineUnits: PropTypes.string,
   userId: PropTypes.number,

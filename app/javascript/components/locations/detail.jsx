@@ -6,6 +6,7 @@ import TagsEditor from 'components/ui/tags_editor';
 import Events from 'components/worlds/events';
 import FormatService from 'services/format_service';
 import Map, { mappableLocations } from 'components/ui/map';
+import Relationships from 'components/worlds/relationships';
 import 'styles/ui/nav';
 import 'styles/worlds/detail';
 
@@ -228,7 +229,7 @@ export default class Detail extends React.Component {
   };
 
   render() {
-    const { charactersPath, eventsPath, locationsPath, permissions, tagsPath, timelineUnits, userId } = this.props;
+    const { charactersPath, eventsPath, locationsPath, permissions, relationshipsPath, tagsPath, timelineUnits, userId } = this.props;
     const { location } = this.state;
 
     return (
@@ -252,6 +253,17 @@ export default class Detail extends React.Component {
           </div>
         </div>
         {this.renderMap()}
+        <hr />
+        <div id='relationships'>
+          <h2 className='h5 font-weight-light text-muted'>relationships</h2>
+          <Relationships charactersPath={charactersPath}
+                         location={location}
+                         locationsPath={locationsPath}
+                         permissions={permissions}
+                         relationshipsPath={relationshipsPath}
+                         timelineUnits={timelineUnits}
+                         userId={userId} />
+        </div>
       </div>
     );
   };
@@ -263,6 +275,7 @@ Detail.propTypes = {
   location: PropTypes.object.isRequired,
   locationsPath: PropTypes.string.isRequired,
   permissions: PropTypes.object.isRequired,
+  relationshipsPath: PropTypes.string.isRequired,
   tagsPath: PropTypes.string.isRequired,
   userId: PropTypes.number,
 };
