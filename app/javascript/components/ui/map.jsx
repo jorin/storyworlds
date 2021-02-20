@@ -138,10 +138,10 @@ export default class Map extends React.Component {
                  onMouseLeave={this.handleReleaseMap}
                  ref={map => this.map = map}
                  style={{ paddingTop }}>
-              <div className='position-absolute p-1 small text-sky' style={{ right: 0, top: '50%' }}>{e.toPrecision(6)}</div>
-              <div className='position-absolute p-1 small text-center text-sky' style={{ left: '50%', top: 0, marginLeft: -50, width: 100 }}>{n.toPrecision(6)}</div>
-              <div className='position-absolute p-1 small text-center text-sky' style={{ left: '50%', bottom: 0, marginLeft: -50, width: 100 }}>{s.toPrecision(6)}</div>
-              <div className='position-absolute p-1 small text-sky' style={{ left: 0, top: '50%' }}>{w.toPrecision(6)}</div>
+              <div className='position-absolute p-1 small text-dark-cerulean' style={{ right: 0, top: '50%' }}>{e.toPrecision(6)}</div>
+              <div className='position-absolute p-1 small text-center text-dark-cerulean' style={{ left: '50%', top: 0, marginLeft: -50, width: 100 }}>{n.toPrecision(6)}</div>
+              <div className='position-absolute p-1 small text-center text-dark-cerulean' style={{ left: '50%', bottom: 0, marginLeft: -50, width: 100 }}>{s.toPrecision(6)}</div>
+              <div className='position-absolute p-1 small text-dark-cerulean' style={{ left: 0, top: '50%' }}>{w.toPrecision(6)}</div>
               {mappedLocations.map(l => <MapPoint deepestTier={deepestTier} key={`location-${l.id}`} {...l} />)}
               <div className='map-controls position-absolute'>
                 <a href='#' className='map-zoom-in' onClick={this.handleZoomIn} />
