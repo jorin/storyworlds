@@ -23,6 +23,14 @@
     "react-select": "^3.0.8",
     "turbolinks": "^5.2.0"
   },
+  "resolutions": {
+    "color-string": "^1.5.5",
+    "glob-parent": "^5.1.2",
+    "is-svg": "^4.2.2",
+    "ssri": "^8.0.1",
+    "trim-newlines": "^3.0.1",
+    "ws": "^7.4.6"
+  },
   "version": "0.1.0",
   "devDependencies": {
     "babel-jest": "^25.3.0",

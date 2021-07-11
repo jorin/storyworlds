@@ -8,7 +8,7 @@ RSpec.describe Tag, type: :model do
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:slug) }
-    it { is_expected.to validate_uniqueness_of(:slug).scoped_to(:world_id) }
+    it { is_expected.to validate_uniqueness_of(:slug).scoped_to(:world_id).case_insensitive }
     it { is_expected.to validate_presence_of(:world) }
   end
 end

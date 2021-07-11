@@ -50,8 +50,7 @@ group :development, :test do
   gem 'pry'
   gem 'pry-remote'
   gem 'rails-controller-testing'
-  gem 'rspec-rails', git: 'https://github.com/rspec/rspec-rails',
-                     branch: 'restore-4-0-dev'
+  gem 'rspec-rails'
   gem 'rubocop', require: false
 end
 
