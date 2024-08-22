@@ -188,7 +188,7 @@ GEM
     regexp_parser (2.1.1)
     reline (0.4.2)
       io-console (~> 0.5)
-    rexml (3.3.3)
+    rexml (3.3.6)
       strscan
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
